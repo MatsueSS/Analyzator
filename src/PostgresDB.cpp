@@ -52,7 +52,7 @@ std::vector<std::vector<std::string>> PostgresDB::fetch(const std::string& query
 
     PGresult *res = PQexecParams(conn, query.c_str(), vec.size(), nullptr,
                                  param_values, nullptr, nullptr, 0);
-    if(PQresultStatus(res) != PGRES_COMMAND_OK){
+    if(PQresultStatus(res) != PGRES_TUPLES_OK){
         PQclear(res);
         return result;
     }

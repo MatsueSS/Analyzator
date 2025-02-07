@@ -19,6 +19,6 @@ public:
 private:
     std::string connStr;
     PGconn *conn;
-}
+};
 
 #endif //_POSTGRES_DB_H_
