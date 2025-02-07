@@ -13,7 +13,8 @@ bool PostgresDB::connect()
 
 void PostgresDB::disconnect()
 {
-    PQfinish(conn);
+    if(conn != nullptr)
+        PQfinish(conn);
     conn = nullptr;
 }
 
@@ -24,6 +25,9 @@ PostgresDB::~PostgresDB()
 
 bool PostgresDB::execute(const std::string& query, const std::vector<std::string>& vec)
 {
+    if(conn == nullptr)
+        return 0;
+
     const char *param_values[vec.size()];
     for(size_t i = 0; i < vec.size(); i++)
         param_values[i] = vec[i].c_str();
@@ -38,11 +42,14 @@ bool PostgresDB::execute(const std::string& query, const std::vector<std::string
 
 std::vector<std::vector<std::string>> PostgresDB::fetch(const std::string& query, const std::vector<std::string>& vec)
 {
+    std::vector<std::vector<std::string>> result;
+    if(conn == nullptr)
+        return result;
+    
     const char *param_values[vec.size()];
     for(size_t i = 0; i < vec.size(); i++)
         param_values[i] = vec[i].c_str();
 
-    std::vector<std::vector<std::string>> result;
     PGresult *res = PQexecParams(conn, query.c_str(), vec.size(), nullptr,
                                  param_values, nullptr, nullptr, 0);
     if(PQresultStatus(res) != PGRES_COMMAND_OK){
