@@ -7,11 +7,11 @@
 
 class PostgresDB {
 public:
-    PostgresDB(const std::string& str);
+    PostgresDB(const std::string&);
 
     bool connect();
     void disconnect();
-    std::vector<std::vector<std::string>> fetch(const std::string&, std::vector<std::string>&);
+    std::vector<std::vector<std::string>> fetch(const std::string&, const std::vector<std::string>&);
     bool execute(const std::string&, const std::vector<std::string>&);
 
     ~PostgresDB();
