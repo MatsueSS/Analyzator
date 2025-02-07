@@ -42,7 +42,7 @@ void TCP_server::start()
     FD_SET(server_socket, &master_fd);
     while(true){
         fd_set read_set = master_fd;
-        if(select(server_socket, &read_set, nullptr, nullptr, nullptr) > 0)
+        if(select(server_socket+1, &read_set, nullptr, nullptr, nullptr) > 0)
             if(FD_ISSET(server_socket, &read_set))
                 accept_clients();
     }

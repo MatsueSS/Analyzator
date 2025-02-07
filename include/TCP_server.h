@@ -10,6 +10,7 @@
 
 #define PORT 8341
 #define BACKLOG 10 //MAX clients waiting accepts in listening
+#define MAXLINE 1024
 
 class TCP_server{
 public:
