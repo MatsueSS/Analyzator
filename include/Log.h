@@ -16,6 +16,8 @@ private:
     static std::mutex mtx;
     static std::queue<std::string> que;
     static int que_size;
+
+    static void flush_file();
 };
 
 #endif //_LOG_H_
