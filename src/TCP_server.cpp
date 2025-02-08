@@ -23,6 +23,27 @@ std::string sock_ntop(sockaddr *addr)
     }
 }
 
+Client::Client(int sockfd, const sockaddr_storage& src, socklen_t len) : sockfd(sockfd), clilen(len)
+{
+    memcpy(&cliaddr, &src, sizeof(sockaddr_storage));
+}
+
+Client::Client(const Client& obj) : sockfd(obj.sockfd), clilen(obj.clilen)
+{
+    memcpy(&cliaddr, &obj.cliaddr, sizeof(sockaddr_storage));
+}
+
+Client& Client::operator=(const Client& obj)
+{
+    if(this == &obj)
+        return *this;
+
+    memcpy(&cliaddr, &obj.cliaddr, sizeof(sockaddr_storage));
+    sockfd = obj.sockfd;
+    clilen = obj.clilen;
+    return *this;
+}
+
 void TCP_server::socket()
 {
     if((server_socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0){
@@ -72,16 +93,16 @@ void TCP_server::start()
     }
 }
 
-void TCP_server::handle(int sockfd)
+void TCP_server::handle(const Client& obj)
 {
     char buf[MAXLINE];
-    ssize_t n = read(sockfd, buf, MAXLINE);
-    write(sockfd, buf, n);
+    ssize_t n = read(obj.sockfd, buf, MAXLINE);
+    write(obj.sockfd, buf, n);
 }
 
 void TCP_server::accept_clients()
 {
-    sockaddr_in addr;
+    sockaddr_storage addr;
     socklen_t len = sizeof(addr);
     int sockfd = accept(server_socket, (sockaddr *)&addr, &len);
     if(sockfd == -1){
@@ -90,7 +111,7 @@ void TCP_server::accept_clients()
     }
     Log::make_note("100001 " + sock_ntop((sockaddr *)&addr));
     std::unique_lock<std::mutex> ul(mtx);
-    clients.push(sockfd);
+    clients.push(Client(sockfd, addr, len));
     ul.unlock();
     cv.notify_one();
 }
@@ -98,19 +119,17 @@ void TCP_server::accept_clients()
 void TCP_server::workThread()
 {
     while(true){
-        int sockfd = -1;
+        Client client(-1, sockaddr_storage(), sizeof(sockaddr_storage));
 
         {
             std::unique_lock<std::mutex> ul(mtx);
             cv.wait(ul, [this]{ return !clients.empty(); });
-            sockfd = clients.front();
+            client = clients.front();
             clients.pop();
         }
 
-        if(sockfd != -1){
-            handle(sockfd);
-            close(sockfd);
-            Log::make_note("100001");
-        }
+        handle(client);
+        close(client.sockfd);
+        Log::make_note("100002 " + sock_ntop((sockaddr *)&client.cliaddr));
     }
 }

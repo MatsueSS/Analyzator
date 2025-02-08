@@ -16,6 +16,16 @@
 //returns in successful IPv4 or IPv6 addr, in failure return ""
 std::string sock_ntop(sockaddr *addr);
 
+struct Client{
+    int sockfd;
+    sockaddr_storage cliaddr;
+    socklen_t clilen;
+
+    Client(int, const sockaddr_storage&, socklen_t);
+    Client& operator=(const Client&);
+    Client(const Client&);
+};
+
 class TCP_server{
 public:
     void socket();
@@ -29,12 +39,12 @@ private:
     std::mutex mtx;
     std::condition_variable cv;
     std::vector<std::thread> workers;
-    std::queue<int> clients;
+    std::queue<Client> clients;
     int server_socket;
 
     void accept_clients();
     void workThread();
-    void handle(int);
+    void handle(const Client&);
 };
 
 #endif //_TCP_SERVER_H_
