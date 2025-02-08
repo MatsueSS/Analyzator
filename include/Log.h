@@ -5,6 +5,8 @@
 #include <mutex>
 #include <string>
 
+#define MAX_BUFFER_QUEUE 2 //Maximum size in queue
+
 class Log{
 public:
     static void make_note(const std::string&);
