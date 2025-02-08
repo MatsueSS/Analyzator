@@ -6,7 +6,8 @@
 #include <cstring>
 #include <arpa/inet.h>
 
-std::string sock_ntop(sockaddr *addr){
+std::string sock_ntop(sockaddr *addr)
+{
     thread_local char str[INET6_ADDRSTRLEN];
     switch (addr->sa_family){
     case AF_INET:

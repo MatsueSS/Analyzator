@@ -7,6 +7,7 @@
 #include <vector>
 #include <sys/select.h>
 #include <queue>
+#include <sys/socket.h>
 
 #define PORT 8341
 #define BACKLOG 10 //MAX clients waiting accepts in listening
