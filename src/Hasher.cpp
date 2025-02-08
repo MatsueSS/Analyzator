@@ -11,7 +11,7 @@ std::string Hasher::make_hash(const std::string &psw)
         psw.length(),
         crypto_pwhash_OPSLIMIT_INTERACTIVE,
         crypto_pwhash_MEMLIMIT_INTERACTIVE
-    ) != 0);
+    ) != 0)
         return "";
     return hash;
 }
