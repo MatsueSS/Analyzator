@@ -12,6 +12,9 @@
 #define BACKLOG 10 //MAX clients waiting accepts in listening
 #define MAXLINE 1024
 
+//returns in successful IPv4 or IPv6 addr, in failure return ""
+std::string sock_ntop(sockaddr *addr);
+
 class TCP_server{
 public:
     void socket();
