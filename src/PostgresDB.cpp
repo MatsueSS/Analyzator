@@ -1,4 +1,5 @@
 #include "PostgresDB.h"
+#include "Log.h"
 
 PostgresDB::PostgresDB(const std::string& connStr) : connStr(connStr), conn(nullptr) {}
 
@@ -6,6 +7,7 @@ bool PostgresDB::connect()
 {
     conn = PQconnectdb(connStr.c_str());
     if(PQstatus(conn) != CONNECTION_OK){
+        Log::make_note("2001");
         return 0;
     }
     return 1;
@@ -34,6 +36,7 @@ bool PostgresDB::execute(const std::string& query, const std::vector<std::string
     PGresult *res = PQexecParams(conn, query.c_str(), vec.size(), nullptr, 
                                  param_values, nullptr, nullptr, 0 );
     if(PQresultStatus(res) != PGRES_COMMAND_OK){
+        Log::make_note("200001");
         return 0;
     }
     PQclear(res);
@@ -53,6 +56,7 @@ std::vector<std::vector<std::string>> PostgresDB::fetch(const std::string& query
     PGresult *res = PQexecParams(conn, query.c_str(), vec.size(), nullptr,
                                  param_values, nullptr, nullptr, 0);
     if(PQresultStatus(res) != PGRES_TUPLES_OK){
+        Log::make_note("200002");
         PQclear(res);
         return result;
     }

@@ -109,6 +109,7 @@ void TCP_server::workThread()
         if(sockfd != -1){
             handle(sockfd);
             close(sockfd);
+            Log::make_note("100001");
         }
     }
 }
