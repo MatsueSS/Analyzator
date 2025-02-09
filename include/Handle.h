@@ -15,7 +15,7 @@ protected:
     ssize_t n;
 
     bool read_fd(int);
-    void write_str(const std::string&, int);
+    void write_str(const std::string&, int) const;
 };
 
 #endif //_HANDLE_H_
