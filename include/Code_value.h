@@ -3,10 +3,13 @@
 
 class Code_value{
 public:
+    Code_value() = default;
     Code_value(int);
 
     void set_code_value(int);
     int get_code_value() const;
+
+    bool operator==(const Code_value& c) const;
 
 private:
     int code;
