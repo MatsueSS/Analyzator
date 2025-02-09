@@ -1,5 +1,6 @@
 #include "Password.h"
 #include "Log.h"
+#include "Hasher.h"
 
 #include <unordered_map>
 #include <sstream>
@@ -9,7 +10,7 @@ Password::Password(PostgresDB* ptr, int id) : conn(ptr), id(id) {}
 int Password::handle(const Client& obj)
 {
     addr = sock_ntop((sockaddr *)&obj.cliaddr);
-    write_str("All good. You can use this app\nFor next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", obj.sockfd);
+    write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", obj.sockfd);
     bool v;
     while((v = read_fd(obj.sockfd))){
         action act = check_action();
@@ -26,6 +27,7 @@ int Password::handle(const Client& obj)
         
         write_str(result, obj.sockfd);
     }
+    return 0;
 }
 
 Password::action Password::check_action() const
@@ -87,12 +89,12 @@ std::string Password::func_get(const std::string& str)
         return "Resourse with this name doesn't exist\n";
 
     make_transaction(get, str);
-    return result[0][2];
+    return result[0][2] + '\n';
 }
 
 std::string Password::func_add(const std::string& str)
 {
-    std::string name, pass;
+    std::string name = "", pass = "";
     std::istringstream ss(str);
     ss >> name >> pass;
     if(name.empty() || pass.empty())
@@ -119,7 +121,7 @@ std::string Password::func_del(const std::string& str)
 std::string Password::func_edit(const std::string& str)
 {
     std::string query = "UPDATE users SET password = $1 WHERE id = $2;";
-    if(!conn->execute(query, {str, std::to_string(id)}))
+    if(!conn->execute(query, {Hasher::make_hash(str), std::to_string(id)}))
         return "Bad inquiry\n";
 
     make_transaction(edit, str);

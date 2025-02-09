@@ -4,14 +4,18 @@
 
 #include <sstream>
 
-Auth::Auth(const std::unique_ptr<PostgresDB>& ptr) : conn(ptr) {}
+Auth::Auth(PostgresDB* ptr) : conn(ptr) {}
 
 int Auth::handle(const Client& client)
 {
     hello(client.sockfd);
     bool v;
     int id = -1;
-    for(int i = 1, v = read_fd(client.sockfd); i < AUTH_TRY && v && id <= 0; i++, v = read_fd(client.sockfd)){
+    for(int i = 0; i < AUTH_TRY; i++){
+        v = read_fd(client.sockfd);
+        if(!v){
+            break;
+        }
         std::string name, pass;
         action act = reg_or_auth(buf, name, pass);
         switch(act){
@@ -27,6 +31,13 @@ int Auth::handle(const Client& client)
         if(id == 0){
             bad_reg(client.sockfd);
             i--;
+        }
+        else if(id < 0){
+            write_str("Try again pls. Something wrong.\n", client.sockfd);
+        }
+        else{
+            write_str("All good. You can use this app!\n", client.sockfd);
+            break;
         }
     }
     if(id == -1)

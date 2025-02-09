@@ -10,12 +10,12 @@
 
 class Auth : public Handle {
 public:
-    Auth(const std::unique_ptr<PostgresDB>&);
+    Auth(PostgresDB*);
 
     virtual int handle(const Client&) override;
 
 private:
-    const std::unique_ptr<PostgresDB>& conn;
+    PostgresDB* conn;
     enum action { auth = 0, reg = 1, noone = -1};
 
     action reg_or_auth(const std::string&, std::string&, std::string&);

@@ -1,6 +1,7 @@
 #include "TCP_server.h"
 #include "Log.h"
 #include "Auth.h"
+#include "Password.h"
 
 #include <unistd.h>
 #include <netinet/in.h>
@@ -131,7 +132,8 @@ void TCP_server::workThread()
             clients.pop();
         }
 
-        std::unique_ptr<PostgresDB> db = std::make_unique<PostgresDB>("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
+        //std::unique_ptr<PostgresDB> db = std::make_unique<PostgresDB>("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
+        PostgresDB* db = new PostgresDB("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
         db->connect();
         Handle *a = new Auth(db);
         int id = a->handle(client);
@@ -140,5 +142,9 @@ void TCP_server::workThread()
             Log::make_note("100002 " + sock_ntop((sockaddr *)&client.cliaddr));
             continue;
         }
+        Handle *p = new Password(db, id);
+        p->handle(client);
+        close(client.sockfd);
+        db->disconnect();
     }
 }
