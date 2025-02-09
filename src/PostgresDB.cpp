@@ -62,7 +62,8 @@ std::vector<std::vector<std::string>> PostgresDB::fetch(const std::string& query
     }
 
     int rows = PQntuples(res);
-    int columns = PQnfields(res);
+    int columns = PQnfields(res);  
+
     for(int i = 0 ; i < rows; i++){
         std::vector<std::string> temp;
         for(int j = 0; j < columns; j++){

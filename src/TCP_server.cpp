@@ -1,10 +1,13 @@
 #include "TCP_server.h"
 #include "Log.h"
+#include "Auth.h"
 
 #include <unistd.h>
 #include <netinet/in.h>
 #include <cstring>
 #include <arpa/inet.h>
+
+#include <iostream>
 
 std::string sock_ntop(sockaddr *addr)
 {
@@ -128,8 +131,14 @@ void TCP_server::workThread()
             clients.pop();
         }
 
-        handle(client);
-        close(client.sockfd);
-        Log::make_note("100002 " + sock_ntop((sockaddr *)&client.cliaddr));
+        std::unique_ptr<PostgresDB> db = std::make_unique<PostgresDB>("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
+        db->connect();
+        Handle *a = new Auth(db);
+        int id = a->handle(client);
+        if(id == -1){
+            close(client.sockfd);
+            Log::make_note("100002 " + sock_ntop((sockaddr *)&client.cliaddr));
+            continue;
+        }
     }
 }
