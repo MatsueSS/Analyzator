@@ -31,3 +31,8 @@ void Log::make_note(const std::string& str)
     que.push(std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()))
     + ' ' + str + '\n');
 }
+
+void Log::read_all_note()
+{
+    
+}
