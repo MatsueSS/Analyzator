@@ -11,7 +11,7 @@
 class Log{
 public:
     static void make_note(const std::string&);
-    //static void read_all_note();
+    static void read_all_note();
 
 private:
     static std::mutex mtx;

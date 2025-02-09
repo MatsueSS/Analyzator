@@ -100,6 +100,12 @@ std::string Password::func_add(const std::string& str)
     if(name.empty() || pass.empty())
         return "Bad inquiry\n";
 
+    std::string query = "SELECT * FROM data WHERE name = $1 AND user_id = $2;";
+    std::vector<std::vector<std::string>> result = conn->fetch(query, {name, std::to_string(id)});
+    if(!result.empty()){
+        return "Resourse with this name is exist on your id.\n";
+    }
+
     std::string query = "INSERT INTO data (resourse_name, password, user_id) VALUES ($1, $2, $3);";
     if(!conn->execute(query, {name, pass, std::to_string(id)}))
         return "Bad inquiry\n";
