@@ -115,3 +115,8 @@ void Compressor::make_compress()
     transfer.clear();
     sz = 0;
 }
+
+const std::unordered_map<Code_value, int>& Compressor::get_result() const
+{
+    return compressed_info;
+}

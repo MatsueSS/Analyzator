@@ -4,15 +4,17 @@
 #include "Compressor.h"
 #include "CSV_reader.h"
 
+#include <memory>
+
 class Result_generator{
 public:
-    Result_generator(const Compressor&, const CSV_reader&);
+    Result_generator(std::shared_ptr<Compressor>, std::shared_ptr<CSV_reader>);
 
-    void generate_report(const std::string&);
+    void generate_report() const;
 
 private:
-    Compressor compressor;
-    CSV_reader translator;
+    std::shared_ptr<Compressor> compressor;
+    std::shared_ptr<CSV_reader> translator;
 
 };
 

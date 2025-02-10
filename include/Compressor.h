@@ -6,6 +6,17 @@
 
 #include <unordered_map>
 
+namespace std
+{
+    template<>
+    struct hash<Code_value>
+    {
+        std::size_t operator()(const Code_value& c) const {
+            return std::hash<int>()(c.get_code_value());
+        }
+    };
+}
+
 #define MAX_LOG_READ 250 //Value for max size transfer. Be careful in edit this value
 #define MAX_SIZE_CODE 32 //Maximum count code-value in .csv with definition code.
 
@@ -23,6 +34,8 @@ public:
 
     void make_compress();
 
+    const std::unordered_map<Code_value, int>& get_result() const;
+
     int size() const;
 
 private:
@@ -32,16 +45,5 @@ private:
 
     void handle_time();
 };
-
-namespace std
-{
-    template<>
-    struct hash<Code_value>
-    {
-        std::size_t operator()(const Code_value& c) const {
-            return std::hash<int>()(c.get_code_value());
-        }
-    };
-}
 
 #endif //_COMPRESSOR_H_
