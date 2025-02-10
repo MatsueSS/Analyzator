@@ -33,10 +33,7 @@ int Password::handle(const Client& obj)
 Password::action Password::check_action() const
 {
     static const std::unordered_map<std::string, action> commands = {
-        {"get", get},
-        {"add", add},
-        {"delete", del},
-        {"edit", edit}
+        {"get", get}, {"add", add}, {"delete", del}, {"edit", edit}
     };
 
     auto it = commands.find(buf);
@@ -56,7 +53,7 @@ void Password::next_step(int sockfd, action act) const
     auto it = step.find(act);
     if(it == step.end()){
         //critical error
-        Log::make_note("401");
+        Log::make_note("4001");
         return;
     }
     write_str(it->second, sockfd);
@@ -106,7 +103,7 @@ std::string Password::func_add(const std::string& str)
         return "Resourse with this name is exist on your id.\n";
     }
 
-    std::string query = "INSERT INTO data (resourse_name, password, user_id) VALUES ($1, $2, $3);";
+    query = "INSERT INTO data (resourse_name, password, user_id) VALUES ($1, $2, $3);";
     if(!conn->execute(query, {name, pass, std::to_string(id)}))
         return "Bad inquiry\n";
 
@@ -137,16 +134,13 @@ std::string Password::func_edit(const std::string& str)
 void Password::make_transaction(action act, const std::string& str)
 {
     static const std::unordered_map<action, std::string> commands = {
-        {get, "get"},
-        {add, "add"},
-        {del, "delete"},
-        {edit, "edit"}
+        {get, "get"}, {add, "add"}, {del, "delete"}, {edit, "edit"}
     };
 
     auto it = commands.find(act);
     if(it == commands.end()){
         //error new-func
-        Log::make_note("10002");
+        Log::make_note("10001");
         return;
     }
 

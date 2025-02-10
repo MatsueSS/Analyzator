@@ -92,7 +92,12 @@ void TCP_server::start()
             if(FD_ISSET(server_socket, &read_set))
                 accept_clients();
         } else {
-            Log::make_note("109");
+            if(errno == EBADF || errno == EINTR || errno == EINVAL)
+                Log::make_note("1001");
+            else if(errno == ENOMEM)
+                Log::make_note("108");
+            else
+                Log::make_note("109");
         }
     }
 }
@@ -110,7 +115,12 @@ void TCP_server::accept_clients()
     socklen_t len = sizeof(addr);
     int sockfd = accept(server_socket, (sockaddr *)&addr, &len);
     if(sockfd == -1){
-        Log::make_note("1003");
+        if(errno == ENFILE || errno == EMFILE)
+            Log::make_note("107");
+        else if(errno == ENOMEM || errno == ENOBUFS)
+            Log::make_note("106");
+        else if(errno == EPROTO || errno == EPERM)
+            Log::make_note("1002");
         return;
     }
     Log::make_note("100001 " + sock_ntop((sockaddr *)&addr));

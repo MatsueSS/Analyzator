@@ -56,7 +56,7 @@ std::vector<std::vector<std::string>> PostgresDB::fetch(const std::string& query
     PGresult *res = PQexecParams(conn, query.c_str(), vec.size(), nullptr,
                                  param_values, nullptr, nullptr, 0);
     if(PQresultStatus(res) != PGRES_TUPLES_OK){
-        Log::make_note("200002");
+        Log::make_note("200001");
         PQclear(res);
         return result;
     }

@@ -51,7 +51,7 @@ int Auth::make_auth(const std::string& name, const std::string& pass)
     std::string query = "SELECT * FROM users WHERE name_user = $1;";
     std::vector<std::vector<std::string>> result = conn->fetch(query, {name});
     if(result.empty()){
-        Log::make_note("200003");
+        Log::make_note("200002");
         return -1;
     }
     return Hasher::verify_password(result[0][2], pass) ? std::stoi(result[0][0]) : -1;
@@ -61,7 +61,7 @@ int Auth::make_reg(const std::string& name, const std::string& pass, const std::
 {
     std::string hash_pass = Hasher::make_hash(pass);
     if(hash_pass.empty()){
-        Log::make_note("200004");
+        Log::make_note("1004");
         return -1;
     }
     std::string query = "INSERT INTO users (name_user, password, ip_registration) VALUES ($1, $2, $3);";
@@ -72,7 +72,7 @@ int Auth::make_reg(const std::string& name, const std::string& pass, const std::
     query = "SELECT * FROM users WHERE name_user = $1;";
     std::vector<std::vector<std::string>> result = conn->fetch(query, {name});
     if(result.empty()){
-        Log::make_note("200005");
+        Log::make_note("200002");
         return -1;
     }
     return std::stoi(result[0][0]);

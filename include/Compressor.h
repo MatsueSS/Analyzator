@@ -22,10 +22,10 @@ public:
 
 private:
     std::unordered_multimap<Code_value, Info_value> transfer; //accumulate log data
-    std::unordered_map<Code_value, Info_value> compressed_info; //compressed data
+    std::unordered_map<Code_value, int> compressed_info; //compressed data
     int sz; //transfer size
 
-    void erase();
+    void handle_time();
 };
 
 #endif //_COMPRESSOR_H_

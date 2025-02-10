@@ -13,7 +13,7 @@ bool Handle::read_fd(int sockfd)
         return 1;
     }
     if(errno == ECONNRESET){
-        Log::make_note("1002");
+        Log::make_note("1003");
     }
     return 0;
 }
