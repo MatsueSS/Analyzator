@@ -6,7 +6,7 @@
 #include <string>
 
 //This macros must be have value = effective maximum - count using thread in programm
-#define MAX_BUFFER_QUEUE 2 //Maximum size in queue
+#define MAX_BUFFER_QUEUE 25 //Maximum size in queue
 
 class Log{
 public:

@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <iostream>
 
 int Log::que_size = 0;
 std::mutex Log::mtx;
@@ -10,6 +11,7 @@ std::queue<std::string> Log::que;
 void Log::flush_file()
 {
     std::lock_guard<std::mutex> lg(mtx);
+    std::cout << "clear queue\n";
     std::ofstream file("../res/log.bin", std::ios_base::app | std::ios_base::binary);
     while(!que.empty()){
         file.write(que.front().c_str(), que.front().size());
@@ -23,10 +25,12 @@ void Log::flush_file()
 
 void Log::make_note(const std::string& str)
 {
-    //In this place probably race, but this doesn't matter
-    if(que_size > MAX_BUFFER_QUEUE)
+    std::unique_lock<std::mutex> ul(mtx);
+    if(que_size > MAX_BUFFER_QUEUE){
+        ul.unlock();
         flush_file();
-    std::lock_guard<std::mutex> lg(mtx);
+        ul.lock();
+    }
     que_size++;
     que.push(std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()))
     + ' ' + str + '\n');
