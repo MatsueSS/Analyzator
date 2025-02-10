@@ -6,6 +6,8 @@
 #include <string>
 #include <unordered_map>
 
+void create_table_and_fill();
+
 class CSV_reader{
 public:
     CSV_reader(const std::string&);
