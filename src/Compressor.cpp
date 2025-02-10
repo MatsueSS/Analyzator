@@ -111,4 +111,7 @@ void Compressor::make_compress()
         return;
 
     handle_time();
+
+    transfer.clear();
+    sz = 0;
 }
