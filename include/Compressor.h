@@ -12,6 +12,11 @@
 class Compressor{
 public:
     Compressor();
+    Compressor(const Compressor&) = delete;
+    Compressor(Compressor&&) noexcept;
+
+    Compressor& operator=(const Compressor&) = delete;
+    Compressor& operator=(Compressor&&) noexcept;
 
     void insert(const std::pair<Code_value, Info_value>&);
     void insert(const Code_value&, const Info_value&);

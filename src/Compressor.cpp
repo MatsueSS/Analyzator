@@ -20,6 +20,24 @@ Compressor::Compressor() : sz(0)
     compressed_info.reserve(MAX_SIZE_CODE);
 }
 
+Compressor::Compressor(Compressor&& obj) noexcept 
+    : transfer(std::move(obj.transfer)), compressed_info(std::move(obj.compressed_info)), sz(obj.sz)
+{
+    obj.sz = 0;
+}
+
+Compressor& Compressor::operator=(Compressor&& obj) noexcept
+{
+    if(this == &obj)
+        return *this;
+    
+    transfer = std::move(obj.transfer);
+    compressed_info = std::move(obj.compressed_info);
+    sz = obj.sz;
+    obj.sz = 0;
+    return *this;
+}
+
 void Compressor::insert(const std::pair<Code_value, Info_value>& obj)
 {
     transfer.insert(obj);
