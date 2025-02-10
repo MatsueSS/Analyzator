@@ -3,17 +3,6 @@
 #include <vector>
 #include <chrono>
 
-namespace std
-{
-    template<>
-    struct hash<Code_value>
-    {
-        std::size_t operator()(const Code_value& c) const {
-            return std::hash<int>()(c.get_code_value());
-        }
-    };
-}
-
 Compressor::Compressor() : sz(0)
 {
     transfer.reserve(MAX_LOG_READ);

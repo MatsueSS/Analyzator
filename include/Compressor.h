@@ -33,4 +33,15 @@ private:
     void handle_time();
 };
 
+namespace std
+{
+    template<>
+    struct hash<Code_value>
+    {
+        std::size_t operator()(const Code_value& c) const {
+            return std::hash<int>()(c.get_code_value());
+        }
+    };
+}
+
 #endif //_COMPRESSOR_H_
