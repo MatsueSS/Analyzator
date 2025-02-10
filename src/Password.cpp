@@ -97,7 +97,7 @@ std::string Password::func_add(const std::string& str)
     if(name.empty() || pass.empty())
         return "Bad inquiry\n";
 
-    std::string query = "SELECT * FROM data WHERE name = $1 AND user_id = $2;";
+    std::string query = "SELECT * FROM data WHERE resourse_name = $1 AND user_id = $2;";
     std::vector<std::vector<std::string>> result = conn->fetch(query, {name, std::to_string(id)});
     if(!result.empty()){
         return "Resourse with this name is exist on your id.\n";

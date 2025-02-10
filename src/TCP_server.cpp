@@ -155,6 +155,7 @@ void TCP_server::workThread()
         Handle *p = new Password(db, id);
         p->handle(client);
         close(client.sockfd);
+        Log::make_note("100002 " + sock_ntop((sockaddr *)&client.cliaddr));
         db->disconnect();
     }
 }
