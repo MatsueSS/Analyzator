@@ -3,8 +3,8 @@
 #include <chrono>
 #include <fstream>
 
-Result_generator::Result_generator(std::shared_ptr<Compressor> ptr_com, std::shared_ptr<CSV_reader> ptr_csv)
-    : compressor(ptr_com), translator(ptr_csv) {}
+Result_generator::Result_generator(std::unique_ptr<Compressor> ptr_com, std::unique_ptr<CSV_reader> ptr_csv)
+    : compressor(std::move(ptr_com)), translator(std::move(ptr_csv)) {}
 
 void Result_generator::generate_report() const
 {
