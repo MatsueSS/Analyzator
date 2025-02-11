@@ -8,8 +8,6 @@
 #include <cstring>
 #include <arpa/inet.h>
 
-#include <iostream>
-
 std::string sock_ntop(sockaddr *addr)
 {
     thread_local char str[INET6_ADDRSTRLEN];

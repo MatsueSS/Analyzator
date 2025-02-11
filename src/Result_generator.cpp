@@ -8,11 +8,14 @@ Result_generator::Result_generator(std::unique_ptr<Compressor> ptr_com, std::uni
 
 void Result_generator::generate_report() const
 {
-    time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    std::string time = ctime(&t);
-    time = std::string(time, 0, time.size()-1);
-    std::ofstream file("../res/" + time + ".txt");
-    file << "Daily result on " << time << '\n';
+    std::time_t t = std::time(nullptr);
+    std::tm* time = std::localtime(&t);
+    std::ofstream file("../res/" + std::to_string(time->tm_mday) + "-"
+    + std::to_string(time->tm_mon+1) + "_" + std::to_string(time->tm_hour) + ".txt");
+
+    file << "Daily result on " << time->tm_mday << '-' << time->tm_mon+1 << '-' 
+    << time->tm_year+1900 << ' ' << time->tm_hour << ':' << time->tm_min << '\n';
+
     const std::unordered_map<Code_value, int>& preresult = compressor->get_result();
     for(auto it = preresult.begin(); it != preresult.end(); it++){
         file << translator->get_definition(it->first) << ": " << it->second << '\n';
