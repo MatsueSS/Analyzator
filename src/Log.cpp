@@ -2,31 +2,38 @@
 
 #include <chrono>
 #include <fstream>
-#include <iostream>
+#include <sstream>
 
 int Log::que_size = 0;
-std::mutex Log::mtx;
+std::mutex Log::mtx_que; //block queue
+std::mutex Log::mtx_file; //block file
 std::queue<std::string> Log::que;
 
 void Log::flush_file()
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    std::cout << "clear queue\n";
+    std::queue<std::string> local_queue;
+
+    {
+        std::lock_guard<std::mutex> lg(mtx_que);
+        local_queue = std::move(que);
+    }
+
+    std::lock_guard<std::mutex> lg(mtx_file);
     std::ofstream file("../res/log.bin", std::ios_base::app | std::ios_base::binary);
-    while(!que.empty()){
-        file.write(que.front().c_str(), que.front().size());
-        que.pop();
+    while(!local_queue.empty()){
+        file.write(local_queue.front().c_str(), local_queue.front().size());
+        local_queue.pop();
     }
     file.write("\0", 1);
     file.flush();
     file.close();
-    que_size = 0;
 }
 
 void Log::make_note(const std::string& str)
 {
-    std::unique_lock<std::mutex> ul(mtx);
+    std::unique_lock<std::mutex> ul(mtx_que);
     if(que_size > MAX_BUFFER_QUEUE){
+        que_size = 0; //Lose thread racing
         ul.unlock();
         flush_file();
         ul.lock();
@@ -36,7 +43,32 @@ void Log::make_note(const std::string& str)
     + ' ' + str + '\n');
 }
 
-void Log::read_all_note()
+std::pair<Code_value, Info_value> to_dataline(const std::string& str)
 {
-    
+    std::istringstream ss(str);
+    std::string time, code, addr;
+    ss >> time >> code >> addr;
+    return addr.empty() ? std::make_pair(Code_value(std::stoi(code)), Info_value(time)) :
+    std::make_pair(Code_value(std::stoi(code)), Info_value(time, addr));
+}
+
+void Log::read_all_note(std::unique_ptr<Compressor>& ptr)
+{
+    //In this funcs maximum can be worked - 1 thread
+    char ch;
+    if(!que.empty())
+        flush_file();
+    std::lock_guard<std::mutex> lg(mtx_file);
+    std::ifstream file("../res/log.bin", std::ios_base::in | std::ios_base::binary);
+    while(!file.eof()){
+        std::string str;
+        while(file.get(ch) && ch != '\n' && ch != '\0'){
+            str.push_back(ch);
+        }
+        if(!str.empty())
+            ptr->insert(to_dataline(str));
+        if(ptr->size() == MAX_LOG_READ)
+            ptr->make_compress();
+    }
+    file.close();
 }

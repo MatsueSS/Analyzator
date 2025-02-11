@@ -19,3 +19,20 @@ void Result_generator::generate_report() const
     }
     file.close();
 }
+
+Result_generator::Result_generator(Result_generator&& obj)
+{
+    compressor = std::move(obj.compressor);
+    translator = std::move(obj.translator);
+}
+
+Result_generator& Result_generator::operator=(Result_generator&& obj)
+{
+    if(this == &obj)
+        return *this;
+
+    compressor = std::move(obj.compressor);
+    translator = std::move(obj.translator);
+
+    return *this;
+}

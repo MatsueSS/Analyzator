@@ -6,7 +6,7 @@
 class Info_value{
 public:
     Info_value() = default;
-    Info_value(const std::string&, const std::string&);
+    Info_value(const std::string&, const std::string& = "");
 
     std::string from_time_t() const;
 
