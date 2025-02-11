@@ -13,9 +13,8 @@ CSV_reader::CSV_reader(const std::string& filepath)
         Log::make_note("5001");
         file.close();
         create_table_and_fill();
-        //generate file by default
+        file.open(filepath);
     }
-    file.open(filepath);
     std::string line;
     while(std::getline(file, line)){
         std::stringstream ss(line);

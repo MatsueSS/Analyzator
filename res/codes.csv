@@ -1,4 +1,3 @@
-Code:Value
 101:system error create socket
 102:system error bind
 103:system error listen
@@ -8,7 +7,6 @@ Code:Value
 109:system error select
 110:impossible create a file
 402:error lose connection with data base
-
 1001:logic/signal error in select
 1002:firewall rules forbid connection
 1003:connection with client was lost
@@ -16,15 +14,11 @@ Code:Value
 2001:error connect with Postgres Data Base
 4001:logic error in design with password-action
 5001:file with code-error designations is missing
-
 10001:error update with new funcs and lose new realizing
-
 100001:new connection
 100002:close connection
 200001:bad quiry-SQL
-
 400001:maximum communication time
 400002:average time
 400003:banned client
 400004:count connect-clients
- 

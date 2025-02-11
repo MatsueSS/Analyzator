@@ -11,7 +11,7 @@ void Result_generator::generate_report() const
     time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::string time = ctime(&t);
     time = std::string(time, 0, time.size()-1);
-    std::ofstream file("../res/" + time);
+    std::ofstream file("../res/" + time + ".txt");
     file << "Daily result on " << time << '\n';
     const std::unordered_map<Code_value, int>& preresult = compressor->get_result();
     for(auto it = preresult.begin(); it != preresult.end(); it++){
@@ -20,13 +20,13 @@ void Result_generator::generate_report() const
     file.close();
 }
 
-Result_generator::Result_generator(Result_generator&& obj)
+Result_generator::Result_generator(Result_generator&& obj) noexcept
 {
     compressor = std::move(obj.compressor);
     translator = std::move(obj.translator);
 }
 
-Result_generator& Result_generator::operator=(Result_generator&& obj)
+Result_generator& Result_generator::operator=(Result_generator&& obj) noexcept
 {
     if(this == &obj)
         return *this;
