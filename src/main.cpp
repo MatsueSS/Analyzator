@@ -1,7 +1,7 @@
-#include "Application.h"
+#include "Analyzer.h"
 
 int main(void)
 {
-    Application app;
+    Analyzer app;
     app.start_process();
 }
