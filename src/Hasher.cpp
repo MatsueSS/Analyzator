@@ -1,7 +1,5 @@
 #include "Hasher.h"
 
-#include <iostream>
-
 std::string Hasher::make_hash(const std::string &psw)
 {
     std::string hash(crypto_pwhash_STRBYTES, '\0');

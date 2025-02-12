@@ -7,8 +7,7 @@
 #include <netinet/in.h>
 #include <cstring>
 #include <arpa/inet.h>
-
-#include <iostream>
+#include <netinet/tcp.h>
 
 std::string sock_ntop(sockaddr *addr)
 {
@@ -54,8 +53,21 @@ void TCP_server::socket()
         Log::make_note("101");
         return;
     }
+    //parametr for running to on one port
     const int on = 1;
     setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
+    //parametr for timeout on tcp-level
+    int keepalive = 1;
+    setsockopt(server_socket, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(keepalive));
+
+    int keepidle = KEEPIDLE;
+    int keepintvl = KEEPINTVL;
+    int keepcnt = KEEPCNT;
+
+    setsockopt(server_socket, IPPROTO_TCP, TCP_KEEPIDLE, &keepidle, sizeof(keepidle));
+    setsockopt(server_socket, IPPROTO_TCP, TCP_KEEPINTVL, &keepintvl, sizeof(keepintvl));
+    setsockopt(server_socket, IPPROTO_TCP, TCP_KEEPCNT, &keepcnt, sizeof(keepcnt));
 }
 
 void TCP_server::bind()
@@ -92,7 +104,12 @@ void TCP_server::start()
             if(FD_ISSET(server_socket, &read_set))
                 accept_clients();
         } else {
-            Log::make_note("109");
+            if(errno == EBADF || errno == EINTR || errno == EINVAL)
+                Log::make_note("1001");
+            else if(errno == ENOMEM)
+                Log::make_note("108");
+            else
+                Log::make_note("109");
         }
     }
 }
@@ -110,7 +127,12 @@ void TCP_server::accept_clients()
     socklen_t len = sizeof(addr);
     int sockfd = accept(server_socket, (sockaddr *)&addr, &len);
     if(sockfd == -1){
-        Log::make_note("1003");
+        if(errno == ENFILE || errno == EMFILE)
+            Log::make_note("107");
+        else if(errno == ENOMEM || errno == ENOBUFS)
+            Log::make_note("106");
+        else if(errno == EPROTO || errno == EPERM)
+            Log::make_note("1002");
         return;
     }
     Log::make_note("100001 " + sock_ntop((sockaddr *)&addr));
@@ -145,6 +167,7 @@ void TCP_server::workThread()
         Handle *p = new Password(db, id);
         p->handle(client);
         close(client.sockfd);
+        Log::make_note("100002 " + sock_ntop((sockaddr *)&client.cliaddr));
         db->disconnect();
     }
 }

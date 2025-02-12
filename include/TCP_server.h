@@ -13,6 +13,11 @@
 #define BACKLOG 10 //MAX clients waiting accepts in listening
 #define MAXLINE 1024
 
+//In global network its values need to up
+#define KEEPIDLE 60
+#define KEEPINTVL 10
+#define KEEPCNT 3
+
 //returns in successful IPv4 or IPv6 addr, in failure return ""
 std::string sock_ntop(sockaddr *addr);
 
