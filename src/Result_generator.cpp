@@ -1,4 +1,5 @@
 #include "Result_generator.h"
+#include "Log.h"
 
 #include <chrono>
 #include <fstream>
@@ -22,6 +23,8 @@ void Result_generator::generate_report() const
         file << translator->get_definition(it->first) << ": " << it->second << '\n';
     }
     file.close();
+
+    Log::remainders_log(compressor);
 }
 
 Result_generator::Result_generator(Result_generator&& obj) noexcept
