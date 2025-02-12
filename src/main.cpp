@@ -4,4 +4,5 @@ int main(void)
 {
     Analyzer app;
     app.start_process();
+    return 0;
 }
