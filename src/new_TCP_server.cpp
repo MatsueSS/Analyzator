@@ -1,6 +1,7 @@
 #include "new_TCP_server.h"
 #include "Reg_or_Auth.h"
 #include "Registration.h"
+#include "PostgresDB.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -8,7 +9,7 @@
 #include <cstring>
 
 Client::Client(int sockfd, const sockaddr_storage& addr, socklen_t len) 
-    : sockfd(sockfd), clilen(len), id(-1)
+    : sockfd(sockfd), clilen(len), id(-1), bad_auth_tries(0)
 {
     memcpy(&cliaddr, &addr, sizeof(sockaddr_storage));
 }
@@ -103,6 +104,7 @@ void new_TCP_server::workThread()
 {
     while(true)
     {
+        std::unique_ptr<PostgresDB> conn = std::make_unique<PostgresDB>("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
         Client client(-1, sockaddr_storage(), sizeof(sockaddr_storage));
 
         {

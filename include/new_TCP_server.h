@@ -21,7 +21,7 @@
 std::string sock_ntop(sockaddr *addr);
 
 struct Client{
-    int sockfd, id;
+    int sockfd, id, bad_auth_tries;
     sockaddr_storage cliaddr;
     socklen_t clilen;
 

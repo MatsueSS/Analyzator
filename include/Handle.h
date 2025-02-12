@@ -1,7 +1,8 @@
 #ifndef _HANDLE_H_
 #define _HANDLE_H_
 
-#include "TCP_server.h"
+#include "new_TCP_server.h"
+#include "PostgresDB.h"
 
 #define CLIENT_DISCONNECTED -1
 
@@ -13,7 +14,7 @@ class Handle{
 public:
     virtual ~Handle() = default;
 
-    virtual int handle(const Client&) = 0;
+    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) = 0;
 
 protected:
     unsigned int id;
