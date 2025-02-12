@@ -4,9 +4,9 @@
 
 int Reg_or_Auth::handle(const Client& obj)
 {
-    static const std::unordered_map<std::string, int> actions = {
-        {"auth", AUTHENTIFICATION}, {"authentification", AUTHENTIFICATION},
-        {"reg", REGISTRATION}, {"registration", REGISTRATION}
+    static const std::unordered_map<std::string, Action> actions = {
+        {"auth", authentification}, {"authentification", authentification},
+        {"reg", registration}, {"registration", registration}
     };
 
     if(!read_fd)

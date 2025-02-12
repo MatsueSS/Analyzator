@@ -7,7 +7,7 @@
 #include <cstring>
 
 Client::Client(int sockfd, const sockaddr_storage& addr, socklen_t len) 
-    : sockfd(sockfd), clilen(len), epoch_handle(0)
+    : sockfd(sockfd), clilen(len), id(-1)
 {
     memcpy(&cliaddr, &addr, sizeof(sockaddr_storage));
 }
@@ -38,6 +38,8 @@ bool Client::operator==(const Client& obj)
 new_TCP_server::new_TCP_server()
 {
     handle_clients.reserve(MAX_CLIENTS_NOW);
+    map_handle[greetings] = std::make_unique<Reg_or_Auth>();
+    map_handle[registration] = std::make_unique<Registration>();
 }
 
 void new_TCP_server::socket()
@@ -91,7 +93,7 @@ void new_TCP_server::accept_clients()
     int sockfd = accept(server_socket, (sockaddr *)&cliaddr, &clilen);
     FD_SET(sockfd, &master_fd);
     maxfd = maxfd > sockfd ? maxfd : sockfd;
-    handle_clients.insert(std::make_pair(Client(sockfd, cliaddr, clilen), std::move(std::make_unique<Reg_or_Auth>())));
+    handle_clients.insert(std::make_pair(Client(sockfd, cliaddr, clilen), greetings));
     std::string str = "Hello, enter needed action: registration or authentification\n";
     write(sockfd, str.c_str(), str.size());
 }
@@ -109,20 +111,20 @@ void new_TCP_server::workThread()
             clients.pop();
         }
 
-        switch(client.epoch_handle){
-        case 0:
-            int result = handle_clients.find(client)->second->handle(client.sockfd);
-            if(result == CLIENT_DISCONNECTED){
-                FD_CLR(client.sockfd, &master_fd);
-                handle_clients.erase(client);
-                return;
-            }
-            else if(result == NOONE){
-                write
-            }
+        // switch(client.epoch_handle){
+        // case 0:
+        //     int result = handle_clients.find(client)->second->handle(client.sockfd);
+        //     if(result == CLIENT_DISCONNECTED){
+        //         FD_CLR(client.sockfd, &master_fd);
+        //         handle_clients.erase(client);
+        //         return;
+        //     }
+        //     else if(result == NOONE){
+        //         write
+        //     }
 
-        case 1:
-        }
+        // case 1:
+        // }
 
     }
 }

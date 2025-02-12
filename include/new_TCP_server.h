@@ -21,10 +21,9 @@
 std::string sock_ntop(sockaddr *addr);
 
 struct Client{
-    int sockfd;
+    int sockfd, id;
     sockaddr_storage cliaddr;
     socklen_t clilen;
-    int epoch_handle;
 
     Client(int, const sockaddr_storage&, socklen_t);
     Client(int);
@@ -58,7 +57,8 @@ public:
     void start();
 
 private:
-    std::unordered_map<Client, std::unique_ptr<Handle>> handle_clients;
+    std::unordered_map<Client, Action> handle_clients;
+    std::unordered_map<Action, std::unique_ptr<Handle>> map_handle;
 
     fd_set master_fd;
     std::mutex mtx;

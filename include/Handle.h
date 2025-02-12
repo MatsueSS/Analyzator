@@ -3,6 +3,10 @@
 
 #include "TCP_server.h"
 
+enum Action{
+    greetings = 0, registration = 1, authentification = 2, 
+};
+
 class Handle{
 public:
     virtual ~Handle() = default;

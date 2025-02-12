@@ -3,8 +3,6 @@
 
 #include "Handle.h"
 
-#define REGISTRATION 1
-#define AUTHENTIFICATION 2
 #define NOONE 0
 #define CLIENT_DISCONNECTED -1
 
