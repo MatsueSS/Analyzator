@@ -10,7 +10,7 @@ void Analyzer::time_check()
     auto t = std::chrono::steady_clock::now();
     while(true)
     {
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(3600));
         if(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()
         - t).count() > 3600*24){
             t = std::chrono::steady_clock::now();
