@@ -159,9 +159,14 @@ void TCP_server::workThread()
         db->connect();
         Handle *a = new Auth(db);
         int id = a->handle(client);
-        if(id == -1){
+        if(id == FALSE_DATA){
             close(client.sockfd);
             Log::make_note("100002 " + sock_ntop((sockaddr *)&client.cliaddr));
+            continue;
+        }
+        else if(id == CRITICAL_SITUATION){
+            Log::make_note("10");
+            close(client.sockfd);
             continue;
         }
         Handle *p = new Password(db, id);

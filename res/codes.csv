@@ -1,3 +1,4 @@
+10:critical situation
 101:system error create socket
 102:system error bind
 103:system error listen
@@ -6,6 +7,7 @@
 108:memory error select
 109:system error select
 110:impossible create a file
+201:critical error create note in data base
 402:error lose connection with data base
 1001:logic/signal error in select
 1002:firewall rules forbid connection
@@ -18,6 +20,7 @@
 100001:new connection
 100002:close connection
 200001:bad quiry-SQL
+200101:existing this data
 400001:maximum communication time
 400002:average time
 400003:banned client
