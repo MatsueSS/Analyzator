@@ -24,6 +24,8 @@ int Auth::handle(const Client& client)
             break;
         case 1:
             id = make_reg(name, pass, sock_ntop((sockaddr *)&client.cliaddr));
+            if(id == -2)
+                write_str("You entered empty name or empty password\n", client.sockfd);
             break;
         default:
             error(client.sockfd);
@@ -64,6 +66,10 @@ int Auth::make_reg(const std::string& name, const std::string& pass, const std::
         Log::make_note("1004");
         return -1;
     }
+
+    if(name.empty() || pass.empty())
+        return -2;
+
     std::string query = "INSERT INTO users (name_user, password, ip_registration) VALUES ($1, $2, $3);";
     if(!conn->execute(query, {name, hash_pass, addr})){
         Log::make_note("200101");
