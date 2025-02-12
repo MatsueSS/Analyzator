@@ -21,6 +21,8 @@ public:
 
     static void new_log_filename();
 
+    static void remainders_log(std::unique_ptr<Compressor>&);
+
 private:
     static std::mutex mtx_que;
     static std::mutex mtx_file;
