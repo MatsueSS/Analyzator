@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <cstring>
 #include <arpa/inet.h>
+#include <netinet/tcp.h>
 
 std::string sock_ntop(sockaddr *addr)
 {
@@ -52,8 +53,21 @@ void TCP_server::socket()
         Log::make_note("101");
         return;
     }
+    //parametr for running to on one port
     const int on = 1;
     setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
+    //parametr for timeout on tcp-level
+    int keepalive = 1;
+    setsockopt(server_socket, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(keepalive));
+
+    int keepidle = KEEPIDLE;
+    int keepintvl = KEEPINTVL;
+    int keepcnt = KEEPCNT;
+
+    setsockopt(server_socket, IPPROTO_TCP, TCP_KEEPIDLE, &keepidle, sizeof(keepidle));
+    setsockopt(server_socket, IPPROTO_TCP, TCP_KEEPINTVL, &keepintvl, sizeof(keepintvl));
+    setsockopt(server_socket, IPPROTO_TCP, TCP_KEEPCNT, &keepcnt, sizeof(keepcnt));
 }
 
 void TCP_server::bind()
