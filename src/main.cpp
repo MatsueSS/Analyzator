@@ -1,6 +1,7 @@
-#include <iostream>
+#include "Application.h"
 
 int main(void)
 {
-    return 0;
+    Application app;
+    app.start_process();
 }
