@@ -10,8 +10,9 @@ void Result_generator::generate_report() const
 {
     std::time_t t = std::time(nullptr);
     std::tm* time = std::localtime(&t);
-    std::ofstream file("../res/" + std::to_string(time->tm_mday) + "-"
-    + std::to_string(time->tm_mon+1) + "_" + std::to_string(time->tm_hour) + ".txt");
+    std::ofstream file("../res/results/" + std::to_string(time->tm_mday) + "-"
+    + std::to_string(time->tm_mon+1) + "_" + std::to_string(time->tm_hour) 
+    + ":" + std::to_string(time->tm_min) + ".txt");
 
     file << "Daily result on " << time->tm_mday << '-' << time->tm_mon+1 << '-' 
     << time->tm_year+1900 << ' ' << time->tm_hour << ':' << time->tm_min << '\n';

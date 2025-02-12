@@ -8,6 +8,7 @@ int Log::que_size = 0;
 std::mutex Log::mtx_que; //block queue
 std::mutex Log::mtx_file; //block file
 std::queue<std::string> Log::que;
+std::string Log::log_file;
 
 void Log::flush_file()
 {
@@ -19,7 +20,7 @@ void Log::flush_file()
     }
 
     std::lock_guard<std::mutex> lg(mtx_file);
-    std::ofstream file("../res/log.bin", std::ios_base::app | std::ios_base::binary);
+    std::ofstream file(log_file, std::ios_base::app | std::ios_base::binary);
     while(!local_queue.empty()){
         file.write(local_queue.front().c_str(), local_queue.front().size());
         local_queue.pop();
@@ -59,7 +60,7 @@ void Log::read_all_note(std::unique_ptr<Compressor>& ptr)
     if(!que.empty())
         flush_file();
     std::lock_guard<std::mutex> lg(mtx_file);
-    std::ifstream file("../res/log.bin", std::ios_base::in | std::ios_base::binary);
+    std::ifstream file(log_file, std::ios_base::in | std::ios_base::binary);
     while(!file.eof()){
         std::string str;
         while(file.get(ch) && ch != '\n' && ch != '\0'){
@@ -71,4 +72,14 @@ void Log::read_all_note(std::unique_ptr<Compressor>& ptr)
             ptr->make_compress();
     }
     file.close();
+    new_log_filename();
+}
+
+void Log::new_log_filename()
+{
+    std::time_t t = std::time(nullptr);
+    std::tm* time_now = std::localtime(&t);
+    log_file = "../res/log/" + std::to_string(time_now->tm_mday) + "-" +
+    std::to_string(time_now->tm_mon+1) + "_" + std::to_string(time_now->tm_hour) +
+    ":" + std::to_string(time_now->tm_min) + ".bin";
 }

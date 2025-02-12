@@ -19,11 +19,14 @@ public:
     static void make_note(const std::string&);
     static void read_all_note(std::unique_ptr<Compressor>&);
 
+    static void new_log_filename();
+
 private:
     static std::mutex mtx_que;
     static std::mutex mtx_file;
     static std::queue<std::string> que;
     static int que_size;
+    static std::string log_file;
 
     static void flush_file();
 };
