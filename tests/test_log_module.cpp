@@ -8,7 +8,7 @@
 void thread_work1()
 {
     while(true){
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         Log::make_note("1001");
     }
 }
@@ -16,7 +16,7 @@ void thread_work1()
 void thread_work2()
 {
     while(true){
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         Log::make_note("1003");
     }
 }
@@ -24,7 +24,7 @@ void thread_work2()
 void thread_work3()
 {
     while(true){
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(4));
         Log::make_note("2001");
     }
 }
@@ -32,7 +32,7 @@ void thread_work3()
 void thread_work4()
 {
     while(true){
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(7));
         Log::make_note("200001");
     }
 }
@@ -44,7 +44,7 @@ void fone_work()
     {
         std::this_thread::sleep_for(std::chrono::seconds(10));
         if(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()
-        - t).count() > 600){
+        - t).count() > 300){
             t = std::chrono::steady_clock::now();
             std::unique_ptr<Compressor> compressor = std::make_unique<Compressor>();
             std::unique_ptr<CSV_reader> csv_reader = std::make_unique<CSV_reader>("../res/codes.csv");

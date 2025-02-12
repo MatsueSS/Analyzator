@@ -24,7 +24,7 @@ void Result_generator::generate_report() const
     }
     file.close();
 
-    Log::remainders_log(compressor);
+    // Log::remainders_log(compressor);
 }
 
 Result_generator::Result_generator(Result_generator&& obj) noexcept

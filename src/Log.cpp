@@ -84,23 +84,23 @@ void Log::new_log_filename()
     ":" + std::to_string(time_now->tm_min) + ".bin";
 }
 
-void Log::remainders_log(const std::unique_ptr<Compressor>& obj)
-{
-    std::lock_guard<std::mutex> lg(mtx_file);
-    std::ofstream file(log_file, std::ios_base::app | std::ios_base::binary);
-    while(obj->size()){
-        auto t = obj->lose_bad_log();
-        file.write(t.second.get_time_t().c_str(), t.second.get_time_t().size());
-        file.write(" ", 1);
+// void Log::remainders_log(const std::unique_ptr<Compressor>& obj)
+// {
+//     std::lock_guard<std::mutex> lg(mtx_file);
+//     std::ofstream file(log_file, std::ios_base::app | std::ios_base::binary);
+//     while(obj->size()){
+//         auto t = obj->lose_bad_log();
+//         file.write(t.second.get_time_t().c_str(), t.second.get_time_t().size());
+//         file.write(" ", 1);
         
-        std::string code = std::to_string(t.first.get_code_value());
-        file.write(code.c_str(), code.size());
-        file.write(" ", 1);
+//         std::string code = std::to_string(t.first.get_code_value());
+//         file.write(code.c_str(), code.size());
+//         file.write(" ", 1);
 
-        file.write(t.second.get_addr().c_str(), t.second.get_addr().size());
-        file.write("\n", 1);
-    }
-    file.write("0", 1);
-    file.flush();
-    file.close();
-}
+//         file.write(t.second.get_addr().c_str(), t.second.get_addr().size());
+//         file.write("\n", 1);
+//     }
+//     file.write("\0", 1);
+//     file.flush();
+//     file.close();
+// }
