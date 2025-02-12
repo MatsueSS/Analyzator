@@ -1,5 +1,6 @@
 #include "new_TCP_server.h"
 #include "Reg_or_Auth.h"
+#include "Registration.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>

@@ -4,7 +4,6 @@
 #include "Handle.h"
 
 #define NOONE 0
-#define CLIENT_DISCONNECTED -1
 
 class Reg_or_Auth : public Handle {
 public:

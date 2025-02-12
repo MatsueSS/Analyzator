@@ -3,6 +3,8 @@
 
 #include "TCP_server.h"
 
+#define CLIENT_DISCONNECTED -1
+
 enum Action{
     greetings = 0, registration = 1, authentification = 2, 
 };
