@@ -2,6 +2,7 @@
 #include "Registration.h"
 #include "PostgresDB.h"
 #include "Authentification.h"
+#include "Command_checker.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -64,6 +65,7 @@ new_TCP_server::new_TCP_server()
     map_handle[greetings] = std::make_unique<Reg_or_Auth>();
     map_handle[registration] = std::make_unique<Registration>();
     map_handle[authentification] = std::make_unique<Authentification>();
+    map_handle[command_checker] = std::make_unique<Command_checker>();
 }
 
 void new_TCP_server::socket()
@@ -172,6 +174,7 @@ void new_TCP_server::workThread()
             }
             else if(result == existing){
                 write_str("User with this name is exist. Please, enter other name\n", client.sockfd);
+                handle_clients.at(client) = greetings;
             }
             else{
                 write_str("Your registration was success. You can use this app\n", client.sockfd);
@@ -183,6 +186,7 @@ void new_TCP_server::workThread()
             if(result == bad_auth){
                 client.bad_auth_tries++;
                 write_str("You make a mistake. Try again\n", client.sockfd);
+                handle_clients.at(client) = greetings;
             }
             else if(result == disconnect){
                 close_connect(client);
@@ -197,6 +201,28 @@ void new_TCP_server::workThread()
                 handle_clients.at(client) = command_checker;
             }
             break;
+        case command_checker:
+            if(result == NOONE){
+                write_str("You entered bad actions. Try again.\n", client.sockfd);
+            }
+            else if(result == disconnect){
+                close_connect(client);
+            }
+            else{
+                handle_clients.at(client) = Action(result);
+            }
+            break;
+        case get:
+            if(result == disconnect){
+                close_connect(client);
+                break;
+            }
+            if(result == not_exist)
+                write_str("Resourse with this name isn't exist. Try again\n", client.sockfd);
+            handle_clients.at(client) = Action(command_checker);
+            break;
+        case add:
+            
         }
     }
 }

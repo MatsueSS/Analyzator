@@ -4,6 +4,7 @@
 #include "Handle.h"
 
 #define NOONE 0
+#define SUCCESS 1
 
 class Command_checker : public Handle{
 public:
