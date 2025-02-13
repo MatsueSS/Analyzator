@@ -11,7 +11,7 @@ enum Action{
 };
 
 enum Error{
-    disconnect = -1, blocked = -2, lose_tries = -3, existing = -4
+    disconnect = -1, blocked = -2, lose_tries = -3, existing = -4, bad_auth = -5
 };
 
 class Handle{

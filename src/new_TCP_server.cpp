@@ -171,7 +171,7 @@ void new_TCP_server::workThread()
                 close_connect(client);
             }
             else if(result == existing){
-                write_str("You entered existing data. Please, enter a new data\n", client.sockfd);
+                write_str("User with this name is exist. Please, enter other name\n", client.sockfd);
             }
             else{
                 write_str("Your registration was success. You can use this app\n", client.sockfd);
@@ -180,7 +180,23 @@ void new_TCP_server::workThread()
             }
             break;
         case authentification:
-
+            if(result == bad_auth){
+                client.bad_auth_tries++;
+                write_str("You make a mistake. Try again\n", client.sockfd);
+            }
+            else if(result == disconnect){
+                close_connect(client);
+            }
+            else if(result == blocked){
+                write_str("You will blocked on 10 minutes.\n", client.sockfd);
+                close_connect(client);
+            }
+            else{
+                write_str("Your authorization was successful. You can use this app.\n", client.sockfd);
+                client.id = result;
+                handle_clients.at(client) = command_checker;
+            }
+            break;
         }
     }
 }
