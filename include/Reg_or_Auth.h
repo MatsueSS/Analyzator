@@ -5,7 +5,6 @@
 
 #define NOONE 0
 #define CLIENT_TRIES 3
-#define BLOCKED -2
 
 class Reg_or_Auth : public Handle {
 public:

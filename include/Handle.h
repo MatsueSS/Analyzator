@@ -4,7 +4,6 @@
 #include "new_TCP_server.h"
 #include "PostgresDB.h"
 
-#define CLIENT_DISCONNECTED -1
 #define MAXLINE 1024
 
 enum Action{

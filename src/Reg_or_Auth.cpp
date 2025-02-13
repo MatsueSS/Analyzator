@@ -10,7 +10,7 @@ int Reg_or_Auth::handle(const Client& obj, std::unique_ptr<PostgresDB>&)
     };
 
     if(!read_fd)
-        return CLIENT_DISCONNECTED;
+        return disconnect;
     
     auto it = actions.find(buf);
     return it != actions.end() ? it->second : NOONE;

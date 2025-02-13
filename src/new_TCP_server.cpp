@@ -102,7 +102,11 @@ void new_TCP_server::start()
             }
             for(int i = 0; i <= maxfd; i++){
                 if(FD_ISSET(i, &readset)){
-                    clients.push(handle_clients.find(i)->first);
+                    {
+                        std::lock_guard<std::mutex> gl(mtx);
+                        clients.push(handle_clients.find(i)->first);
+                    }
+                    cv.notify_one();
                 }
             }
         }
@@ -114,11 +118,14 @@ void new_TCP_server::accept_clients()
     sockaddr_storage cliaddr;
     socklen_t clilen = sizeof(cliaddr);
     int sockfd = accept(server_socket, (sockaddr *)&cliaddr, &clilen);
+    if(sockfd < 0){
+        //error
+        return;
+    }
     FD_SET(sockfd, &master_fd);
     maxfd = maxfd > sockfd ? maxfd : sockfd;
     handle_clients.insert(std::make_pair(Client(sockfd, cliaddr, clilen), greetings));
-    std::string str = "Hello, enter needed action: registration or authentification\n";
-    write(sockfd, str.c_str(), str.size());
+    write_str("Hello, enter needed action: registration or authentification\n", sockfd);
 }
 
 void new_TCP_server::close_connect(const Client& obj)
@@ -126,6 +133,11 @@ void new_TCP_server::close_connect(const Client& obj)
     close(obj.sockfd);
     handle_clients.erase(obj);
     FD_CLR(obj.sockfd, &master_fd);
+}
+
+void new_TCP_server::write_str(const std::string& str, int sockfd) const
+{
+    write(sockfd, str.c_str(), str.size());
 }
 
 void new_TCP_server::workThread()
@@ -148,6 +160,7 @@ void new_TCP_server::workThread()
         switch(handle_clients.at(client)){
         case greetings:
             if(result == NOONE){
+                write_str("You entered false action. Try again\n", client.sockfd);
                 break;
             }
             handle_clients.find(client)->second = Action(result);
@@ -157,24 +170,16 @@ void new_TCP_server::workThread()
                 close_connect(client);
             }
             else if(result == existing){
-                
+                write_str("You entered existing data. Please, enter a new data\n", client.sockfd);
             }
+            else{
+                write_str("Your registration was success. You can use this app\n", client.sockfd);
+                client.id = result;
+                handle_clients.at(client) = command_checker;
+            }
+            break;
+        case authentification:
+            
         }
-
-        // switch(client.epoch_handle){
-        // case 0:
-        //     int result = handle_clients.find(client)->second->handle(client.sockfd);
-        //     if(result == CLIENT_DISCONNECTED){
-        //         FD_CLR(client.sockfd, &master_fd);
-        //         handle_clients.erase(client);
-        //         return;
-        //     }
-        //     else if(result == NOONE){
-        //         write
-        //     }
-
-        // case 1:
-        // }
-
     }
 }
