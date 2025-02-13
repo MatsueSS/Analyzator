@@ -1,7 +1,7 @@
 #include "new_TCP_server.h"
-#include "Reg_or_Auth.h"
 #include "Registration.h"
 #include "PostgresDB.h"
+#include "Authentification.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -63,6 +63,7 @@ new_TCP_server::new_TCP_server()
     handle_clients.reserve(MAX_CLIENTS_NOW);
     map_handle[greetings] = std::make_unique<Reg_or_Auth>();
     map_handle[registration] = std::make_unique<Registration>();
+    map_handle[authentification] = std::make_unique<Authentification>();
 }
 
 void new_TCP_server::socket()
@@ -179,7 +180,7 @@ void new_TCP_server::workThread()
             }
             break;
         case authentification:
-            
+
         }
     }
 }
