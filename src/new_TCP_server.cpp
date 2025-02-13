@@ -210,6 +210,14 @@ void new_TCP_server::workThread()
             }
             handle_clients[client] = command_checker;
             break;
+        case edit:
+            if(result == disconnect){
+                close_connect(client);
+                break;
+            }
+            handle_clients[client] = command_checker;
+            break;
         }
+
     }
 }

@@ -50,6 +50,4 @@ private:
     void write_str(const std::string&, int) const;
 };
 
-
-
 #endif //_NEW_TCP_SERVER_H_

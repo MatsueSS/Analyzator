@@ -6,5 +6,6 @@ int Del::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
         return disconnect;
 
     std::string query = "DELETE FROM data WHERE resourse_name = $1 AND id = $2;";
+    make_transaction(del, id, buf, sock_ntop((sockaddr *)&obj.cliaddr), db);
     return db->execute(query, {buf, std::to_string(id)}) ? SUCCESS : not_exist;
 }
