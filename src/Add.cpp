@@ -14,11 +14,11 @@ int Add::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
     if(name.empty() || pass.empty())
         return empty_values;
 
-    if(!is_not_exist(name, id, db))
+    if(!is_not_exist(name, obj.id, db))
         return existing;
 
     std::string query = "INSERT INTO data (resourse_name, password, user_id) VALUES ($1, $2, $3);";
-    db->execute(query, {name, Hasher::make_hash(pass), std::to_string(id)});
+    db->execute(query, {name, Hasher::make_hash(pass), std::to_string(obj.id)});
     return SUCCESS;
 }
 

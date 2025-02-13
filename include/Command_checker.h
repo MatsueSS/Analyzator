@@ -11,6 +11,9 @@ public:
     virtual ~Command_checker() = default;
 
     virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
+
+private:
+    void make_transaction(int, const std::string&, const std::string&, std::unique_ptr<PostgresDB>&);
 };
 
 #endif //_COMMAND_CHECKER_H_
