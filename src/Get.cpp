@@ -12,6 +12,7 @@ int Get::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
     if(result.empty())
         return not_exist;
 
+    
     write(obj.sockfd, result[0][2].c_str(), result[0][2].size());
 
     return SUCCESS;
