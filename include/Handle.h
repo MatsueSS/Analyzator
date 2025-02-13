@@ -7,7 +7,7 @@
 #define MAXLINE 1024
 
 enum Action{
-    greetings = 0, registration = 1, authentification = 2, 
+    greetings = 0, registration = 1, authentification = 2, command_checker = 3
 };
 
 enum Error{
