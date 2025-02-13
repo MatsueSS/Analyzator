@@ -1,12 +1,13 @@
 #include "Registration.h"
 #include "Hasher.h"
 #include "Log.h"
+#include "new_TCP_server.h"
 
 #include <sstream>
 
 int Registration::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
 {
-    if(!read_fd)
+    if(!read_fd(obj.sockfd))
         return disconnect;
 
     std::istringstream ss(buf);

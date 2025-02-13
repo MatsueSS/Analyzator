@@ -2,6 +2,7 @@
 #define _COMMAND_CHECKER_H_
 
 #include "Handle.h"
+#include "new_TCP_server.h"
 
 #define NOONE 0
 #define SUCCESS 1

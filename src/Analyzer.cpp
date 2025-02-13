@@ -1,6 +1,6 @@
 #include "Analyzer.h"
 #include "Result_generator.h"
-#include "TCP_server.h"
+#include "new_TCP_server.h"
 #include "Log.h"
 
 Analyzer::Analyzer() {}
@@ -27,7 +27,7 @@ void Analyzer::start_process()
 {
     std::thread time_checker_thread(&Analyzer::time_check, this);
 
-    TCP_server server;
+    new_TCP_server server;
     server.socket();
     server.bind();
     server.listen();

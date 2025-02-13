@@ -9,7 +9,7 @@ int Reg_or_Auth::handle(const Client& obj, std::unique_ptr<PostgresDB>&)
         {"reg", registration}, {"registration", registration}
     };
 
-    if(!read_fd)
+    if(!read_fd(obj.sockfd))
         return disconnect;
     
     auto it = actions.find(buf);

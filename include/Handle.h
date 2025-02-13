@@ -1,8 +1,10 @@
 #ifndef _HANDLE_H_
 #define _HANDLE_H_
 
-#include "new_TCP_server.h"
 #include "PostgresDB.h"
+#include "Client.h"
+
+#include <memory>
 
 #define MAXLINE 1024
 

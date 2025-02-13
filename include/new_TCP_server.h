@@ -2,6 +2,7 @@
 #define _NEW_TCP_SERVER_H_
 
 #include "Handle.h"
+#include "Client.h"
 
 #include <mutex>
 #include <condition_variable>
@@ -19,32 +20,6 @@
 
 //returns in successful IPv4 or IPv6 addr, in failure return ""
 std::string sock_ntop(sockaddr *addr);
-
-struct Client{
-    int sockfd, id, bad_auth_tries;
-    sockaddr_storage cliaddr;
-    socklen_t clilen;
-
-    Client(int, const sockaddr_storage&, socklen_t);
-    Client(int);
-    Client& operator=(const Client&);
-    Client(const Client&);
-
-    int get_socket() const;
-
-    bool operator==(const Client&);
-};
-
-namespace std
-{
-    template<>
-    struct hash<Client>
-    {
-        std::size_t operator()(const Client& c) const noexcept {
-            return std::hash<int>()(c.sockfd);
-        }
-    };
-}
 
 class new_TCP_server{
 public:

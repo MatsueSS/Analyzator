@@ -1,5 +1,7 @@
 #include "Command_checker.h"
 
+#include <unordered_map>
+
 int Command_checker::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
 {
     if(!read_fd(obj.sockfd))
