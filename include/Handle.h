@@ -5,9 +5,14 @@
 #include "PostgresDB.h"
 
 #define CLIENT_DISCONNECTED -1
+#define MAXLINE 1024
 
 enum Action{
     greetings = 0, registration = 1, authentification = 2, 
+};
+
+enum Error{
+    disconnect = -1, blocked = -2, lose_tries = -3, existing = -4
 };
 
 class Handle{
@@ -22,7 +27,6 @@ protected:
     ssize_t n;
 
     bool read_fd(int);
-    void write_str(const std::string&, int) const;
 };
 
 #endif //_HANDLE_H_

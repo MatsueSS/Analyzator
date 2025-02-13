@@ -70,7 +70,9 @@ private:
 
     void accept_clients();
     void workThread();
-    void handle(const Client&);
+    
+    void close_connect(const Client&);
+    void write_str(const std::string&, int) const;
 };
 
 
