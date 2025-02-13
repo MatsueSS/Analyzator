@@ -3,6 +3,8 @@
 
 #include "Handle.h"
 
+#define NOONE 0
+
 class Command_checker : public Handle{
 public:
     virtual ~Command_checker() = default;
