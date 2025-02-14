@@ -13,6 +13,10 @@ struct Client{
     Client(int);
     Client& operator=(const Client&);
     Client(const Client&);
+    Client(Client&&) noexcept;
+    Client& operator=(Client&&) noexcept;
+
+    void add_tries();
 
     bool operator==(const Client&) const;
 };
@@ -22,7 +26,7 @@ namespace std
     template<>
     struct hash<Client>
     {
-        std::size_t operator()(const Client& c) const noexcept {
+        std::size_t operator()(const Client& c) const {
             return std::hash<int>()(c.sockfd);
         }
     };

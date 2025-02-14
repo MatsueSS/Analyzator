@@ -4,12 +4,16 @@
 #include "Authentification.h"
 #include "Get.h"
 #include "Add.h"
+#include "Del.h"
+#include "Edit.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <cstring>
+
+#include <iostream>
 
 std::string sock_ntop(sockaddr *addr)
 {
@@ -37,11 +41,15 @@ new_TCP_server::new_TCP_server()
     map_handle[command_checker] = std::make_unique<Command_checker>();
     map_handle[get] = std::make_unique<Get>();
     map_handle[add] = std::make_unique<Add>();
+    map_handle[del] = std::make_unique<Del>();
+    map_handle[edit] = std::make_unique<Edit>();
 }
 
 void new_TCP_server::socket()
 {
     server_socket = ::socket(AF_INET, SOCK_STREAM, 0);
+    const int on = 1;
+    setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 }
 
 void new_TCP_server::bind()
@@ -61,26 +69,35 @@ void new_TCP_server::listen()
 
 void new_TCP_server::start()
 {
-    for(int i = 0; i < std::thread::hardware_concurrency()-2;i++)
+    for(int i = 0; i < std::thread::hardware_concurrency()-2;i++){
         workers.emplace_back(&new_TCP_server::workThread, this);
+    }
+
+    timeval time;
+    time.tv_sec = 0;
+    time.tv_usec = 100;
 
     FD_ZERO(&master_fd);
     maxfd = server_socket;
     FD_SET(server_socket, &master_fd);
     while(true){
         fd_set readset = master_fd;
-        if(select(maxfd+1, &readset, nullptr, nullptr, nullptr) > 0){
+        ssize_t n;
+        if((n = select(maxfd+1, &readset, nullptr, nullptr, &time)) > 0){
             if(FD_ISSET(server_socket, &readset)){
                 accept_clients();
-                continue;
+                if(--n <= 0)
+                    continue;
             }
             for(int i = 0; i <= maxfd; i++){
                 if(FD_ISSET(i, &readset)){
-                    {
-                        std::lock_guard<std::mutex> gl(mtx);
-                        clients.push(handle_clients.find(i)->first);
-                    }
+                    FD_CLR(i, &master_fd);
+                    std::unique_lock<std::mutex> ul(mtx);
+                    clients.push(handle_clients.find(i)->first);
+                    ul.unlock();
                     cv.notify_one();
+                    if(--n <= 0)
+                        break;
                 }
             }
         }
@@ -116,25 +133,31 @@ void new_TCP_server::write_str(const std::string& str, int sockfd) const
 
 void new_TCP_server::workThread()
 {
+    std::unique_ptr<PostgresDB> conn = std::make_unique<PostgresDB>("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
+    conn->connect();
     while(true)
     {
-        std::unique_ptr<PostgresDB> conn = std::make_unique<PostgresDB>("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
-        conn->connect();
-        Client client(-1, sockaddr_storage(), sizeof(sockaddr_storage));
-
-        {
-            std::unique_lock<std::mutex> ul(mtx);
-            cv.wait(ul, [this]{ return !clients.empty(); });
-            client = clients.front();
-            clients.pop();
-        }
+        std::unique_lock<std::mutex> ul(mtx);
+        cv.wait(ul, [this]{ return !clients.empty(); });
+        Client client = clients.front();
+        clients.pop();
+        ul.unlock();
 
         int result = map_handle.find(handle_clients.find(client)->second)->second->handle(client.sockfd, conn);
         
+        auto it = handle_clients.find(client);
+        if(it == handle_clients.end()){
+            continue;
+        }
+
         switch(handle_clients.at(client)){
         case greetings:
             if(result == NOONE){
                 write_str("You entered false action. Try again\n", client.sockfd);
+                break;
+            }
+            else if(result == disconnect){
+                close_connect(client);
                 break;
             }
             handle_clients[client] = Action(result);
@@ -142,6 +165,7 @@ void new_TCP_server::workThread()
         case registration:
             if(result == disconnect){
                 close_connect(client);
+                break;
             }
             else if(result == existing){
                 write_str("User with this name is exist. Please, enter other name\n", client.sockfd);
@@ -218,6 +242,7 @@ void new_TCP_server::workThread()
             handle_clients[client] = command_checker;
             break;
         }
-
+        if(result != disconnect)
+            FD_SET(client.sockfd, &master_fd);
     }
 }

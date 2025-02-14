@@ -15,6 +15,30 @@ Client::Client(const Client& obj) : sockfd(obj.sockfd), clilen(obj.clilen),
     memcpy(&cliaddr, &obj.cliaddr, sizeof(sockaddr_storage));
 }
 
+Client::Client(Client&& obj) noexcept : sockfd(obj.sockfd), clilen(obj.clilen), id(obj.id), bad_auth_tries(obj.bad_auth_tries)
+{
+    memmove(&cliaddr, &obj.cliaddr, sizeof(sockaddr_storage));
+    obj.sockfd = -1;
+    obj.clilen = 0;
+    obj.bad_auth_tries = 0;
+    obj.id = 0;
+}
+
+Client& Client::operator=(Client&& obj) noexcept
+{
+    if(this == &obj)
+        return *this;
+
+    sockfd = obj.sockfd;
+    clilen = obj.clilen;
+    id = obj.id;
+    bad_auth_tries = obj.bad_auth_tries;
+    memmove(&cliaddr, &obj.cliaddr, sizeof(sockaddr_storage));
+    obj.sockfd = -1;
+
+    return *this;
+}
+
 Client& Client::operator=(const Client& obj)
 {
     if(this == &obj)
