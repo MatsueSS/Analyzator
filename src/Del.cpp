@@ -1,6 +1,6 @@
 #include "Del.h"
 
-int Del::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
+int Del::handle(const Client& obj, PostgresDB* db)
 {
     if(!read_fd(obj.sockfd))
         return disconnect;

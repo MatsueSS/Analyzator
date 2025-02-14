@@ -11,10 +11,10 @@ class Command_checker : public Handle{
 public:
     virtual ~Command_checker() = default;
 
-    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
+    virtual int handle(const Client&, PostgresDB*) override;
 
 protected:
-    void make_transaction(Action, int, const std::string&, const std::string&, std::unique_ptr<PostgresDB>&);
+    void make_transaction(Action, int, const std::string&, const std::string&, PostgresDB*);
 };
 
 #endif //_COMMAND_CHECKER_H_

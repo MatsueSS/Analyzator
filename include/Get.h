@@ -5,7 +5,7 @@
 
 class Get : public Command_checker{
 public:
-    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
+    virtual int handle(const Client&, PostgresDB*) override;
 };
 
 #endif //_GET_H_

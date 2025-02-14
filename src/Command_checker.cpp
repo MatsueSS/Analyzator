@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-int Command_checker::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
+int Command_checker::handle(const Client& obj, PostgresDB* db)
 {
     if(!read_fd(obj.sockfd))
         return disconnect;
@@ -16,7 +16,7 @@ int Command_checker::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
 }
 
 void Command_checker::make_transaction(Action act, int id, const std::string& name, 
-    const std::string& addr, std::unique_ptr<PostgresDB>& db)
+    const std::string& addr, PostgresDB* db)
 {
     static const std::unordered_map<Action, std::string> commands = {
         {get, "get"}, {add, "add"}, {del, "delete"}, {edit, "edit"}

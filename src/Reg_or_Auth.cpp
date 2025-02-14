@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-int Reg_or_Auth::handle(const Client& obj, std::unique_ptr<PostgresDB>&)
+int Reg_or_Auth::handle(const Client& obj, PostgresDB*)
 {
     static const std::unordered_map<std::string, Action> actions = {
         {"auth", authentification}, {"authentification", authentification},

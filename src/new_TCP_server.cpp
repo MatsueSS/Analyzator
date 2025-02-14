@@ -161,6 +161,7 @@ void new_TCP_server::workThread()
                 break;
             }
             handle_clients[client] = Action(result);
+            write_str("Entered name and password for continue\n", client.sockfd);
             break;
         case registration:
             if(result == disconnect){
@@ -169,7 +170,7 @@ void new_TCP_server::workThread()
             }
             else if(result == existing){
                 write_str("User with this name is exist. Please, enter other name\n", client.sockfd);
-                handle_clients[client] = greetings;
+                break;
             }
             else{
                 write_str("Your registration was success. You can use this app\n", client.sockfd);
@@ -182,7 +183,7 @@ void new_TCP_server::workThread()
             if(result == bad_auth){
                 client.bad_auth_tries++;
                 write_str("You make a mistake. Try again\n", client.sockfd);
-                handle_clients[client] = greetings;
+                break;
             }
             else if(result == disconnect){
                 close_connect(client);

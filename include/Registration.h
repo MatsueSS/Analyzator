@@ -5,7 +5,7 @@
 
 class Registration : public Reg_or_Auth{
 public:
-    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
+    virtual int handle(const Client&, PostgresDB*) override;
 
 };
 
