@@ -8,9 +8,9 @@
 class Blocker{
 public:
     //Added new prison with mutex
-    static void add_prison(std::string addr);
+    static void add_prison(const std::string&);
     //Check prison on prisons
-    static bool has_prison(std::string addr);
+    static bool has_prison(const std::string&);
 
 private:
     static std::map<std::string, std::string> prisons;
