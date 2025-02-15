@@ -5,6 +5,8 @@
 #include <map>
 #include <mutex>
 
+#define TIME_BLOCK 10 //block bad users on minutes
+
 class Blocker{
 public:
     //Added new prison with mutex
