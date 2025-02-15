@@ -16,20 +16,23 @@ std::pair<Code_value, Info_value> to_dataline(const std::string&);
 
 class Log{
 public:
+    //Write a note in queue-notes
     static void make_note(const std::string&);
+    //Read all notes in file
     static void read_all_note(std::unique_ptr<Compressor>&);
-
+    //Need for update log file after result file
     static void new_log_filename();
 
     // static void remainders_log(const std::unique_ptr<Compressor>&);
 
 private:
-    static std::mutex mtx_que;
-    static std::mutex mtx_file;
-    static std::queue<std::string> que;
+    static std::mutex mtx_que; //Blocked access from queue
+    static std::mutex mtx_file; //Blocked access from file
+    static std::queue<std::string> que; //Queue notes
     static int que_size;
-    static std::string log_file;
+    static std::string log_file; //Name file
 
+    //Can be clear queue and write all data in log-file
     static void flush_file();
 };
 

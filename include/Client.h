@@ -5,7 +5,8 @@
 #include <string>
 
 struct Client{
-    int sockfd, id;
+    int sockfd; //socket client 
+    int id; //user-id in database
     sockaddr_storage cliaddr;
     socklen_t clilen;
 

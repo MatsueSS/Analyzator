@@ -17,6 +17,7 @@ public:
     CSV_reader& operator=(const CSV_reader&) = delete;
     CSV_reader& operator=(CSV_reader&&) noexcept;
 
+    //Return description code from the codes.csv
     std::string get_definition(const Code_value&) const;
 
 private:

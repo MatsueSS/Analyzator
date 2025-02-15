@@ -21,6 +21,7 @@ public:
     void insert(const std::pair<Code_value, Info_value>&);
     void insert(const Code_value&, const Info_value&);
 
+    //Analyze all data in this object and sorted his
     void make_compress();
 
     const std::unordered_map<Code_value, int>& get_result() const;
@@ -34,6 +35,7 @@ private:
     std::unordered_map<Code_value, int> compressed_info; //compressed data
     int sz; //transfer size
 
+    //Help be analyze time code connect and disconnect
     void handle_time();
 };
 

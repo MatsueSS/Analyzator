@@ -34,11 +34,11 @@ private:
     std::unordered_map<Client, Action> handle_clients;
     std::unordered_map<Action, std::unique_ptr<Handle>> map_handle;
 
-    fd_set master_fd;
-    std::mutex mtx;
-    std::condition_variable cv;
-    std::vector<std::thread> workers;
-    std::queue<Client> clients;
+    fd_set master_fd; //All set for select
+    std::mutex mtx; //Blocked access for Queue ready clients
+    std::condition_variable cv; //Notify thread about new ready clients
+    std::vector<std::thread> workers; //Container threads
+    std::queue<Client> clients; //Queue ready clients
     int server_socket;
     int maxfd;
 

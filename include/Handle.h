@@ -25,10 +25,10 @@ public:
     virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) = 0;
 
 protected:
-    unsigned int id;
     char buf[MAXLINE];
     ssize_t n;
 
+    //Read socket buffer
     bool read_fd(int);
 };
 

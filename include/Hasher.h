@@ -8,8 +8,10 @@
 
 class Hasher{
 public:
+    //Make a hash
     static std::string make_hash(const std::string&);
 
+    //Control coincidence
     static bool verify_password(const std::string&, const std::string&);
 };
 

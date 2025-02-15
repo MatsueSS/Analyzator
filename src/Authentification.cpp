@@ -6,9 +6,6 @@
 
 int Authentification::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
 {
-    if(obj.bad_auth_tries == CLIENT_TRIES)
-        return blocked;
-
     if(!read_fd(obj.sockfd))
         return disconnect;
     

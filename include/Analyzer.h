@@ -8,6 +8,7 @@ public:
     void start_process();
 
 private:
+    //start a process for time control
     void time_check();
 };
 
