@@ -5,7 +5,7 @@
 #include <string>
 
 struct Client{
-    int sockfd, id, bad_auth_tries;
+    int sockfd, id;
     sockaddr_storage cliaddr;
     socklen_t clilen;
 
@@ -15,8 +15,6 @@ struct Client{
     Client(const Client&);
     Client(Client&&) noexcept;
     Client& operator=(Client&&) noexcept;
-
-    void add_tries();
 
     bool operator==(const Client&) const;
 };
