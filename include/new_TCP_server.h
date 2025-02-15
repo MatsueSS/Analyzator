@@ -31,7 +31,7 @@ public:
     void start();
 
 private:
-    std::unordered_map<Client, Action> handle_clients;
+    std::unordered_map<Client, std::pair<Action,int>> handle_clients;
     std::unordered_map<Action, std::unique_ptr<Handle>> map_handle;
 
     fd_set master_fd; //All set for select

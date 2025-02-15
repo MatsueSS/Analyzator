@@ -7,6 +7,7 @@
 #include "Del.h"
 #include "Edit.h"
 #include "Log.h"
+#include "Blocker.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -126,10 +127,15 @@ void new_TCP_server::accept_clients()
             Log::make_note("1002");
         return;
     }
+    if(Blocker::has_prison(sock_ntop((sockaddr*)&cliaddr))){
+        write_str("You was banned\n", sockfd);
+        close(sockfd);
+        return;
+    }
     Log::make_note("100001 " + sock_ntop((sockaddr*)&cliaddr));
     FD_SET(sockfd, &master_fd);
     maxfd = maxfd > sockfd ? maxfd : sockfd;
-    handle_clients.insert(std::make_pair(Client(sockfd, cliaddr, clilen), greetings));
+    handle_clients.insert(std::make_pair(Client(sockfd, cliaddr, clilen), std::make_pair(greetings, 0)));
     write_str("Hello, enter needed action: registration or authentification\n", sockfd);
 }
 
@@ -158,9 +164,9 @@ void new_TCP_server::workThread()
         clients.pop();
         ul.unlock();
 
-        int result = map_handle.find(handle_clients.find(client)->second)->second->handle(client, conn);
+        int result = map_handle.find(handle_clients.find(client)->second.first)->second->handle(client, conn);
 
-        switch(handle_clients.at(client)){
+        switch(handle_clients.at(client).first){
         case greetings:
             if(result == NOONE){
                 write_str("You entered false action. Try again\n", client.sockfd);
@@ -170,7 +176,7 @@ void new_TCP_server::workThread()
                 close_connect(client);
                 break;
             }
-            handle_clients[client] = Action(result);
+            handle_clients[client].first = Action(result);
             write_str("Entered name and password for continue\n", client.sockfd);
             break;
         case registration:
@@ -186,11 +192,14 @@ void new_TCP_server::workThread()
                 write_str("Your registration was success. You can use this app\n", client.sockfd);
                 write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
                 client.id = result;
-                handle_clients[client] = command_checker;
+                handle_clients[client].first = command_checker;
             }
             break;
         case authentification:
             if(result == bad_auth){
+                if(++(handle_clients[client].second) == CLIENT_TRIES)
+                    break;
+                
                 write_str("You make a mistake. Try again\n", client.sockfd);
                 break;
             }
@@ -205,7 +214,7 @@ void new_TCP_server::workThread()
                 write_str("Your authorization was successful. You can use this app.\n", client.sockfd);
                 write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
                 client.id = result;
-                handle_clients[client] = command_checker;
+                handle_clients[client].first = command_checker;
             }
             break;
         case command_checker:
@@ -216,7 +225,7 @@ void new_TCP_server::workThread()
                 close_connect(client);
             }
             else{
-                handle_clients[client] = Action(result);
+                handle_clients[client].first = Action(result);
             }
             break;
         case get:
@@ -226,7 +235,7 @@ void new_TCP_server::workThread()
             }
             if(result == not_exist)
                 write_str("Resourse with this name isn't exist. Try again\n", client.sockfd);
-            handle_clients[client] = Action(command_checker);
+            handle_clients[client].first = Action(command_checker);
             break;
         case add:
             if(result == disconnect){
@@ -242,15 +251,22 @@ void new_TCP_server::workThread()
             else{
                 write_str("New data was added\n", client.sockfd);
             }
-            handle_clients[client] = command_checker;
+            handle_clients[client].first = command_checker;
             break;
         case edit:
             if(result == disconnect){
                 close_connect(client);
                 break;
             }
-            handle_clients[client] = command_checker;
+            handle_clients[client].first = command_checker;
             break;
+        }
+        if(handle_clients[client].second == CLIENT_TRIES){
+            write_str("You was banned\n", client.sockfd);
+            Blocker::add_prison(sock_ntop((sockaddr*)&client.cliaddr));
+            Log::make_note("100003 " + sock_ntop((sockaddr*)&client.cliaddr));
+            close_connect(client);
+            continue;
         }
         if(result != disconnect)
             FD_SET(client.sockfd, &master_fd);
