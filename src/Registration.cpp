@@ -4,7 +4,6 @@
 #include "new_TCP_server.h"
 
 #include <sstream>
-#include <iostream>
 
 int Registration::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
 {

@@ -13,8 +13,6 @@
 #include <arpa/inet.h>
 #include <cstring>
 
-#include <iostream>
-
 std::string sock_ntop(sockaddr *addr)
 {
     thread_local char str[INET6_ADDRSTRLEN];
@@ -176,7 +174,6 @@ void new_TCP_server::workThread()
             break;
         case authentification:
             if(result == bad_auth){
-                client.bad_auth_tries++;
                 write_str("You make a mistake. Try again\n", client.sockfd);
                 break;
             }
