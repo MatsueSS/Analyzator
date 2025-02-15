@@ -115,6 +115,8 @@ void new_TCP_server::start()
 
 void new_TCP_server::accept_clients()
 {
+    if(handle_clients.size() == MAX_CLIENTS_NOW)
+        return;
     sockaddr_storage cliaddr;
     socklen_t clilen = sizeof(cliaddr);
     int sockfd = accept(server_socket, (sockaddr *)&cliaddr, &clilen);
