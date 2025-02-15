@@ -5,10 +5,10 @@
 
 class Add : public Command_checker{
 public:
-    virtual int handle(const Client&, PostgresDB*) override;
+    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
 
 private:
-    bool is_not_exist(const std::string&, int, PostgresDB*);
+    bool is_not_exist(const std::string&, int, std::unique_ptr<PostgresDB>&);
 };
 
 #endif //_ADD_H_

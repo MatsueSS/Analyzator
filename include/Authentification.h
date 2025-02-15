@@ -5,7 +5,7 @@
 
 class Authentification : public Reg_or_Auth{
 public:
-    virtual int handle(const Client&, PostgresDB*) override;
+    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
 };
 
 #endif //_AUTHNTIFICATION_H_

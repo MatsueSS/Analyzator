@@ -1,6 +1,6 @@
 #include "Edit.h"
 
-int Edit::handle(const Client& obj, PostgresDB* db)
+int Edit::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
 {
     if(!read_fd(obj.sockfd))
         return disconnect;

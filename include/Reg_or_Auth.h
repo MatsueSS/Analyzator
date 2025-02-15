@@ -10,7 +10,7 @@ class Reg_or_Auth : public Handle {
 public:
     virtual ~Reg_or_Auth() = default;
 
-    virtual int handle(const Client&, PostgresDB*) override;
+    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
 };
 
 #endif //_REG_OR_AUTH_H_

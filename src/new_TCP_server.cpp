@@ -134,6 +134,7 @@ void new_TCP_server::write_str(const std::string& str, int sockfd) const
 void new_TCP_server::workThread()
 {
     std::unique_ptr<PostgresDB> conn = std::make_unique<PostgresDB>("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
+    //PostgresDB* conn = new PostgresDB("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
     conn->connect();
     while(true)
     {
@@ -143,12 +144,7 @@ void new_TCP_server::workThread()
         clients.pop();
         ul.unlock();
 
-        int result = map_handle.find(handle_clients.find(client)->second)->second->handle(client.sockfd, conn);
-        
-        auto it = handle_clients.find(client);
-        if(it == handle_clients.end()){
-            continue;
-        }
+        int result = map_handle.find(handle_clients.find(client)->second)->second->handle(client, conn);
 
         switch(handle_clients.at(client)){
         case greetings:

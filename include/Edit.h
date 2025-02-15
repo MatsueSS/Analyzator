@@ -5,7 +5,7 @@
 
 class Edit : public Command_checker{
 public:
-    virtual int handle(const Client&, PostgresDB*) override;
+    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
 };
 
 #endif //_EDIT_H_

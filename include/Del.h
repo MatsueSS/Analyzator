@@ -5,7 +5,7 @@
 
 class Del : public Command_checker{
 public:
-    virtual int handle(const Client&, PostgresDB*) override;
+    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
 };
 
 #endif //_DEL_H_

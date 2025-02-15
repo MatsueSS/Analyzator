@@ -22,7 +22,7 @@ class Handle{
 public:
     virtual ~Handle() = default;
 
-    virtual int handle(const Client&, PostgresDB* ) = 0;
+    virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) = 0;
 
 protected:
     unsigned int id;
