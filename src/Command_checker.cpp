@@ -1,6 +1,7 @@
 #include "Command_checker.h"
 
 #include <unordered_map>
+#include <unistd.h>
 
 int Command_checker::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
 {
@@ -11,8 +12,24 @@ int Command_checker::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
         {"get", get}, {"delete", del}, {"del", del}, {"add", add}, {"edit", edit}
     };
 
+    static const std::unordered_map<Action, std::string> descriptions = {
+        {get, "Please enter the name of the desired resourse\n"},
+        {add, "Please enter add name and password for this resourse\n"},
+        {del, "Please enter the name of the desired resourse\n"},
+        {edit, "Please enter the new password of your auth\n"}
+    };
+
     auto it = commands.find(buf);
-    return it != commands.end() ? it->second : NOONE;
+
+    if(it == commands.end()){
+        std::string bad = "You entered the bad actions. Try again.\n";
+        write(obj.sockfd, bad.c_str(), bad.size());
+        return NOONE;
+    }
+
+    write(obj.sockfd, descriptions.find(it->second)->second.c_str(), descriptions.find(it->second)->second.size());
+
+    return it->second;
 }
 
 void Command_checker::make_transaction(Action act, int id, const std::string& name, 

@@ -134,7 +134,6 @@ void new_TCP_server::write_str(const std::string& str, int sockfd) const
 void new_TCP_server::workThread()
 {
     std::unique_ptr<PostgresDB> conn = std::make_unique<PostgresDB>("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
-    //PostgresDB* conn = new PostgresDB("dbname=loganalyzer user=matsuess password=731177889232 host=localhost port=5432");
     conn->connect();
     while(true)
     {
