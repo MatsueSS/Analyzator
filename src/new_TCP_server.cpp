@@ -6,6 +6,7 @@
 #include "Add.h"
 #include "Del.h"
 #include "Edit.h"
+#include "Log.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -45,7 +46,10 @@ new_TCP_server::new_TCP_server()
 
 void new_TCP_server::socket()
 {
-    server_socket = ::socket(AF_INET, SOCK_STREAM, 0);
+    if((server_socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0){
+        Log::make_note("101");
+        return;
+    }
     const int on = 1;
     setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 }
@@ -57,12 +61,18 @@ void new_TCP_server::bind()
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(PORT);
-    ::bind(server_socket, (sockaddr *)&servaddr, sizeof(servaddr));
+    if(::bind(server_socket, (sockaddr *)&servaddr, sizeof(servaddr)) < 0){
+        Log::make_note("102");
+        return;
+    }
 }
 
 void new_TCP_server::listen()
 {
-    ::listen(server_socket, BACKLOG);
+    if(::listen(server_socket, BACKLOG) < -1){
+        Log::make_note("103");
+        return;
+    }
 }
 
 void new_TCP_server::start()
@@ -108,9 +118,15 @@ void new_TCP_server::accept_clients()
     socklen_t clilen = sizeof(cliaddr);
     int sockfd = accept(server_socket, (sockaddr *)&cliaddr, &clilen);
     if(sockfd < 0){
-        //error
+        if(errno == ENFILE || errno == EMFILE)
+            Log::make_note("107");
+        else if(errno == ENOMEM || errno == ENOBUFS)
+            Log::make_note("106");
+        else if(errno == EPROTO || errno == EPERM)
+            Log::make_note("1002");
         return;
     }
+    Log::make_note("100001 " + sock_ntop((sockaddr*)&cliaddr));
     FD_SET(sockfd, &master_fd);
     maxfd = maxfd > sockfd ? maxfd : sockfd;
     handle_clients.insert(std::make_pair(Client(sockfd, cliaddr, clilen), greetings));
@@ -119,6 +135,7 @@ void new_TCP_server::accept_clients()
 
 void new_TCP_server::close_connect(const Client& obj)
 {
+    Log::make_note("100002 " + sock_ntop((sockaddr*)&obj.cliaddr));
     close(obj.sockfd);
     handle_clients.erase(obj);
     FD_CLR(obj.sockfd, &master_fd);
