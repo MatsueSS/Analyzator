@@ -17,8 +17,3 @@ bool Handle::read_fd(int sockfd)
     }
     return 0;
 }
-
-void Handle::write_str(const std::string& str, int sockfd) const
-{
-    write(sockfd, str.c_str(), str.size());
-}
