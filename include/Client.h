@@ -6,7 +6,7 @@
 
 struct Client{
     int sockfd; //socket client 
-    int id; //user-id in database
+    mutable int id; //user-id in database
     sockaddr_storage cliaddr;
     socklen_t clilen;
 

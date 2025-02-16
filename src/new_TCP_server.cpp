@@ -192,15 +192,19 @@ void new_TCP_server::workThread()
                 write_str("User with this name is exist. Please, enter other name\n", client.sockfd);
                 break;
             }
+            else if(result == empty_values){
+                write_str("You writed empty values. Try again\n", client.sockfd);
+                break;
+            }
             else{
                 write_str("Your registration was success. You can use this app\n", client.sockfd);
                 write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
-                client.id = result;
+                handle_clients.find(client)->first.id = result;
                 handle_clients[client].first = command_checker;
             }
             break;
         case authentification:
-            if(result == bad_auth){
+            if(result == bad_auth || result == empty_values){
                 if(++(handle_clients[client].second) == CLIENT_TRIES)
                     break;
                 
@@ -217,7 +221,8 @@ void new_TCP_server::workThread()
             else{
                 write_str("Your authorization was successful. You can use this app.\n", client.sockfd);
                 write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
-                client.id = result;
+                // client.id = result;
+                handle_clients.find(client)->first.id = result;
                 handle_clients[client].first = command_checker;
             }
             break;
@@ -262,6 +267,7 @@ void new_TCP_server::workThread()
                 close_connect(client);
                 break;
             }
+            write_str("Your authentification password was edited\n", client.sockfd);
             handle_clients[client].first = command_checker;
             break;
         }

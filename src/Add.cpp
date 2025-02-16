@@ -1,5 +1,4 @@
 #include "Add.h"
-#include "Hasher.h"
 #include "Log.h"
 
 #include <sstream>
@@ -27,7 +26,7 @@ int Add::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
     }
 
     std::string query = "INSERT INTO data (resourse_name, password, user_id) VALUES ($1, $2, $3);";
-    db->execute(query, {name, Hasher::make_hash(pass), std::to_string(obj.id)});
+    db->execute(query, {name, pass, std::to_string(obj.id)});
     make_transaction(add, obj.id, buf, sock_ntop((sockaddr *)&obj.cliaddr), db);
     return SUCCESS;
 }
