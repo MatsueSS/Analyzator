@@ -221,7 +221,6 @@ void new_TCP_server::workThread()
             else{
                 write_str("Your authorization was successful. You can use this app.\n", client.sockfd);
                 write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
-                // client.id = result;
                 handle_clients.find(client)->first.id = result;
                 handle_clients[client].first = command_checker;
             }
@@ -268,6 +267,14 @@ void new_TCP_server::workThread()
                 break;
             }
             write_str("Your authentification password was edited\n", client.sockfd);
+            handle_clients[client].first = command_checker;
+            break;
+        case del:
+            if(result == disconnect){
+                close_connect(client);
+                break;
+            }
+            write_str("Your resourse was deleted\n", client.sockfd);
             handle_clients[client].first = command_checker;
             break;
         }
