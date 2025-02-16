@@ -31,8 +31,6 @@ public:
 
     const std::unordered_map<Code_value, int>& get_result() const;
 
-    // std::pair<Code_value, Info_value> lose_bad_log();
-
     int size() const;
 
 private:

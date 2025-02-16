@@ -23,8 +23,6 @@ public:
     //Need for update log file after result file
     static void new_log_filename();
 
-    // static void remainders_log(const std::unique_ptr<Compressor>&);
-
 private:
     static std::mutex mtx_que; //Blocked access from queue
     static std::mutex mtx_file; //Blocked access from file
