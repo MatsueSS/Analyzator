@@ -47,6 +47,15 @@ private:
     
     void close_connect(const Client&);
     void write_str(const std::string&, int) const;
+
+    void handle_greetings(Client&, int);
+    void handle_registration(Client&, int);
+    void handle_authentification(Client&, int);
+    void handle_command_checker(Client&, int);
+    void handle_get(Client&, int);
+    void handle_add(Client&, int);
+    void handle_del(Client&, int);
+    void handle_edit(Client&, int);
 };
 
 #endif //_NEW_TCP_SERVER_H_
