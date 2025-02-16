@@ -64,6 +64,7 @@ void new_TCP_server::bind()
     servaddr.sin_port = htons(PORT);
     if(::bind(server_socket, (sockaddr *)&servaddr, sizeof(servaddr)) < 0){
         Log::make_note("102");
+        close(server_socket);
         return;
     }
 }
@@ -72,6 +73,7 @@ void new_TCP_server::listen()
 {
     if(::listen(server_socket, BACKLOG) < -1){
         Log::make_note("103");
+        close(server_socket);
         return;
     }
 }
@@ -170,97 +172,28 @@ void new_TCP_server::workThread()
 
         switch(handle_clients[client].first){
         case greetings:
-            if(result == NOONE){
-                write_str("You entered false action. Try again\n", client.sockfd);
-                break;
-            }
-            else if(result == disconnect){
-                close_connect(client);
-                break;
-            }
-            handle_clients[client].first = Action(result);
-            write_str("Entered name and password for continue\n", client.sockfd);
+            handle_greetings(client, result);
             break;
         case registration:
-            if(result == disconnect){
-                close_connect(client);
-                break;
-            }
-            else if(result == existing){
-                write_str("User with this name is exist. Please, enter other name\n", client.sockfd);
-                break;
-            }
-            else{
-                write_str("Your registration was success. You can use this app\n", client.sockfd);
-                write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
-                client.id = result;
-                handle_clients[client].first = command_checker;
-            }
+            handle_registration(client, result);
             break;
         case authentification:
-            if(result == bad_auth){
-                if(++(handle_clients[client].second) == CLIENT_TRIES)
-                    break;
-                
-                write_str("You make a mistake. Try again\n", client.sockfd);
-                break;
-            }
-            else if(result == disconnect){
-                close_connect(client);
-            }
-            else if(result == blocked){
-                write_str("You will blocked on 10 minutes.\n", client.sockfd);
-                close_connect(client);
-            }
-            else{
-                write_str("Your authorization was successful. You can use this app.\n", client.sockfd);
-                write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
-                client.id = result;
-                handle_clients[client].first = command_checker;
-            }
+            handle_authentification(client, result);
             break;
         case command_checker:
-            if(result == NOONE){
-                write_str("You entered bad actions. Try again.\n", client.sockfd);
-            }
-            else if(result == disconnect){
-                close_connect(client);
-            }
-            else{
-                handle_clients[client].first = Action(result);
-            }
+            handle_command_checker(client, result);
             break;
         case get:
-            if(result == disconnect){
-                close_connect(client);
-                break;
-            }
-            if(result == not_exist)
-                write_str("Resourse with this name isn't exist. Try again\n", client.sockfd);
-            handle_clients[client].first = Action(command_checker);
+            handle_get(client, result);
             break;
         case add:
-            if(result == disconnect){
-                close_connect(client);
-                break;
-            }
-            if(result == existing){
-                write_str("You entered exist resourse in your account. Enter another name.\n", client.sockfd);
-            }
-            else if(result == empty_values){
-                write_str("You entered empty values\n", client.sockfd);
-            }
-            else{
-                write_str("New data was added\n", client.sockfd);
-            }
-            handle_clients[client].first = command_checker;
+            handle_add(client, result);
             break;
         case edit:
-            if(result == disconnect){
-                close_connect(client);
-                break;
-            }
-            handle_clients[client].first = command_checker;
+            handle_edit(client, result);
+            break;
+        case del:
+            handle_del(client, result);
             break;
         }
         if(handle_clients[client].second == CLIENT_TRIES){
@@ -273,4 +206,129 @@ void new_TCP_server::workThread()
         if(result != disconnect)
             FD_SET(client.sockfd, &master_fd);
     }
+}
+
+void new_TCP_server::handle_greetings(Client& client, int result)
+{
+    if(result == NOONE){
+        write_str("You entered false action. Try again\n", client.sockfd);
+        return;
+    }
+    else if(result == disconnect){
+        close_connect(client);
+        return;
+    }
+    handle_clients[client].first = Action(result);
+    write_str("Entered name and password for continue\n", client.sockfd);
+}
+
+void new_TCP_server::handle_registration(Client& client, int result)
+{
+    if(result == disconnect){
+        close_connect(client);
+        return;
+    }
+    else if(result == existing){
+        write_str("User with this name is exist. Please, enter other name\n", client.sockfd);
+        return;
+    }
+    else if(result == empty_values){
+        write_str("You writed empty values. Try again\n", client.sockfd);
+        return;
+    }
+    else{
+        write_str("Your registration was success. You can use this app\n", client.sockfd);
+        write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
+        handle_clients.find(client)->first.id = result;
+        handle_clients[client].first = command_checker;
+    }
+}
+
+void new_TCP_server::handle_authentification(Client& client, int result)
+{
+    if(result == bad_auth || result == empty_values){
+        if(++(handle_clients[client].second) == CLIENT_TRIES)
+            return;
+        
+        write_str("You make a mistake. Try again\n", client.sockfd);
+    }
+    else if(result == disconnect){
+        close_connect(client);
+    }
+    else if(result == blocked){
+        write_str("You will blocked on 10 minutes.\n", client.sockfd);
+        close_connect(client);
+    }
+    else{
+        write_str("Your authorization was successful. You can use this app.\n", client.sockfd);
+        write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
+        handle_clients.find(client)->first.id = result;
+        handle_clients[client].first = command_checker;
+    }
+}
+
+void new_TCP_server::handle_command_checker(Client& client, int result)
+{
+    if(result == NOONE){
+        write_str("You entered bad actions. Try again.\n", client.sockfd);
+    }
+    else if(result == disconnect){
+        close_connect(client);
+    }
+    else{
+        handle_clients[client].first = Action(result);
+    }
+}
+
+void new_TCP_server::handle_add(Client& client, int result)
+{
+    if(result == disconnect){
+        close_connect(client);
+        return;
+    }
+    if(result == existing){
+        write_str("You entered exist resourse in your account. Enter another name.\n", client.sockfd);
+    }
+    else if(result == empty_values){
+        write_str("You entered empty values\n", client.sockfd);
+    }
+    else{
+        write_str("New data was added\n", client.sockfd);
+    }
+    handle_clients[client].first = command_checker;
+}
+
+void new_TCP_server::handle_get(Client& client, int result)
+{
+    if(result == disconnect){
+        close_connect(client);
+        return;
+    }
+    if(result == not_exist)
+        write_str("Resourse with this name isn't exist. Try again\n", client.sockfd);
+    handle_clients[client].first = Action(command_checker);
+}
+
+void new_TCP_server::handle_edit(Client& client, int result)
+{
+    if(result == disconnect){
+        close_connect(client);
+        return;
+    }
+    write_str("Your authentification password was edited\n", client.sockfd);
+    handle_clients[client].first = command_checker;
+}
+
+void new_TCP_server::handle_del(Client& client, int result)
+{
+    if(result == disconnect){
+        close_connect(client);
+        return;
+    }
+    else if(result == not_exist){
+        write_str("This resourse does not exist exist\n", client.sockfd);
+    }
+    else
+        write_str("Your resourse was deleted\n", client.sockfd);
+    handle_clients[client].first = command_checker;
 }

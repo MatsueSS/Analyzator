@@ -15,7 +15,7 @@
 
 #define PORT 8341
 #define BACKLOG 10 //MAX clients waiting accepts in listening
-#define MAX_CLIENTS_NOW 100
+#define MAX_CLIENTS_NOW 250
 
 //returns in successful IPv4 or IPv6 addr, in failure return ""
 std::string sock_ntop(sockaddr *addr);
@@ -47,6 +47,15 @@ private:
     
     void close_connect(const Client&);
     void write_str(const std::string&, int) const;
+
+    void handle_greetings(Client&, int);
+    void handle_registration(Client&, int);
+    void handle_authentification(Client&, int);
+    void handle_command_checker(Client&, int);
+    void handle_get(Client&, int);
+    void handle_add(Client&, int);
+    void handle_del(Client&, int);
+    void handle_edit(Client&, int);
 };
 
 #endif //_NEW_TCP_SERVER_H_

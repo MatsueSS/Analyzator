@@ -17,6 +17,14 @@ int Registration::handle(const Client& obj, std::unique_ptr<PostgresDB>& db)
     if(name.empty() || pass.empty())
         return empty_values;
 
+    if(!db->is_connect()){
+        Log::make_note("2001");
+        if(!db->connect()){
+            Log::make_note("202");
+            return disconnect;
+        }
+    }
+        
     std::string query = "INSERT INTO users (name_user, password, ip_registration) VALUES ($1, $2, $3) RETURNING id;";
     std::vector<std::vector<std::string>> result = db->fetch(query, {name, Hasher::make_hash(pass), sock_ntop((sockaddr*)&obj.cliaddr)});
     if(result.empty()){

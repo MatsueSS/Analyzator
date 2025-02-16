@@ -6,15 +6,17 @@
 107:limit open descriptor for thread/system
 108:memory error select
 109:system error select
-110:impossible create a file
 201:critical error create note in data base
+202:critical error to connect with data base
+301:error with creating hash
 402:error lose connection with data base
 1001:logic/signal error in select
 1002:firewall rules forbid connection
 1003:connection with client was lost
+1007:log file was lost
 2001:error connect with Postgres Data Base
 4001:logic error in design with password-action
-5001:file with code-error designations is missing
+5001:file with code-error-event designations is missing
 10001:error update with new funcs and lose new realizing
 100001:new connection
 100002:close connection

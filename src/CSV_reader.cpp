@@ -46,11 +46,7 @@ std::string CSV_reader::get_definition(const Code_value& obj) const
 void create_table_and_fill()
 {
     std::ofstream file("../res/codes.csv");
-    if(!file){
-        Log::make_note("110");
-        exit(0);
-    }
-    file << "Code:Value\n";
+    
     file << "101:system error create socket\n";
     file << "102:system error bind\n";
     file << "103:system error listen\n";

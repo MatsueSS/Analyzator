@@ -11,6 +11,7 @@ public:
 
     bool connect();
     void disconnect();
+    bool is_connect();
     std::vector<std::vector<std::string>> fetch(const std::string&, const std::vector<std::string>&);
     bool execute(const std::string&, const std::vector<std::string>&);
 

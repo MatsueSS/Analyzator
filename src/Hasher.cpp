@@ -1,4 +1,5 @@
 #include "Hasher.h"
+#include "Log.h"
 
 std::string Hasher::make_hash(const std::string &psw)
 {
@@ -9,8 +10,10 @@ std::string Hasher::make_hash(const std::string &psw)
         psw.length(),
         crypto_pwhash_OPSLIMIT_INTERACTIVE,
         crypto_pwhash_MEMLIMIT_INTERACTIVE
-    ) != 0)
+    ) != 0){
+        Log::make_note("301");
         return "";
+    }
     return hash;
 }
 
