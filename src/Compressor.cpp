@@ -122,11 +122,3 @@ const std::unordered_map<Code_value, int>& Compressor::get_result() const
 {
     return compressed_info;
 }
-
-// std::pair<Code_value, Info_value> Compressor::lose_bad_log()
-// {
-//     auto result = *transfer.begin();
-//     transfer.erase(transfer.begin());
-//     sz--;
-//     return result;
-// }

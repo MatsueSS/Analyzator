@@ -61,6 +61,11 @@ void Log::read_all_note(std::unique_ptr<Compressor>& ptr)
         flush_file();
     std::lock_guard<std::mutex> lg(mtx_file);
     std::ifstream file(log_file, std::ios_base::in | std::ios_base::binary);
+    if(!file){
+        Log::make_note("1007");
+        new_log_filename();
+        return;
+    }
     while(!file.eof()){
         std::string str;
         while(file.get(ch) && ch != '\n' && ch != '\0'){
@@ -71,6 +76,7 @@ void Log::read_all_note(std::unique_ptr<Compressor>& ptr)
         if(ptr->size() == MAX_LOG_READ)
             ptr->make_compress();
     }
+    ptr->make_compress();
     file.close();
     new_log_filename();
 }
@@ -83,24 +89,3 @@ void Log::new_log_filename()
     std::to_string(time_now->tm_mon+1) + "_" + std::to_string(time_now->tm_hour) +
     ":" + std::to_string(time_now->tm_min) + ".bin";
 }
-
-// void Log::remainders_log(const std::unique_ptr<Compressor>& obj)
-// {
-//     std::lock_guard<std::mutex> lg(mtx_file);
-//     std::ofstream file(log_file, std::ios_base::app | std::ios_base::binary);
-//     while(obj->size()){
-//         auto t = obj->lose_bad_log();
-//         file.write(t.second.get_time_t().c_str(), t.second.get_time_t().size());
-//         file.write(" ", 1);
-        
-//         std::string code = std::to_string(t.first.get_code_value());
-//         file.write(code.c_str(), code.size());
-//         file.write(" ", 1);
-
-//         file.write(t.second.get_addr().c_str(), t.second.get_addr().size());
-//         file.write("\n", 1);
-//     }
-//     file.write("\0", 1);
-//     file.flush();
-//     file.close();
-// }

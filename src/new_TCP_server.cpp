@@ -64,6 +64,7 @@ void new_TCP_server::bind()
     servaddr.sin_port = htons(PORT);
     if(::bind(server_socket, (sockaddr *)&servaddr, sizeof(servaddr)) < 0){
         Log::make_note("102");
+        close(server_socket);
         return;
     }
 }
@@ -72,6 +73,7 @@ void new_TCP_server::listen()
 {
     if(::listen(server_socket, BACKLOG) < -1){
         Log::make_note("103");
+        close(server_socket);
         return;
     }
 }
