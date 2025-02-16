@@ -5,9 +5,13 @@ This program will be a good tool for developing new network applications with fu
 ----- History ------
 
 Generating an idea, setting a task and determining the outcome - 9.01.2025
+
 Selection of development tools, design of the structure of interaction of modules - 13.01.2025
+
 Analysis of the selected tools, description of the entire design, writing pseudocode - 28.01.2025
+
 Release of the first version of my program with written tests of different modules v1.0.0 - 11.02.2025
+
 Change in user processing structure, release of new version v1.1.0 - 15.02.2025
 
 ----- Design solutions -----
