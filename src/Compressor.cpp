@@ -112,7 +112,7 @@ void Compressor::make_compress()
 
     handle_time();
 
-    if(sz >= LIMIT_ACCUMULATION_ADDR){
+    if(sz == LIMIT_ACCUMULATION_ADDR){
         transfer.clear();
         sz = 0;
     }

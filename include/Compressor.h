@@ -12,7 +12,7 @@ output to the resulting file*/
 
 #define MAX_LOG_READ 250 //Value for max size transfer. Be careful in edit this value
 #define MAX_SIZE_CODE 32 //Maximum count code-value in .csv with definition code.
-#define LIMIT_ACCUMULATION_ADDR 150 //Limited this value, because i take limit clients
+#define LIMIT_ACCUMULATION_ADDR 250 //Limited this value, because i take limit clients
 
 class Compressor{
 public:
