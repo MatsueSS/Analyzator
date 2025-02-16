@@ -1,6 +1,10 @@
 #ifndef _COMPRESSOR_H_
 #define _COMPRESSOR_H_
 
+/*This class helps to read a file in portions. This class is designed to allocate 
+the amount of necessary information into a separate container, which will be 
+output to the resulting file*/
+
 #include "Code_value.h"
 #include "Info_value.h"
 
@@ -8,6 +12,7 @@
 
 #define MAX_LOG_READ 250 //Value for max size transfer. Be careful in edit this value
 #define MAX_SIZE_CODE 32 //Maximum count code-value in .csv with definition code.
+#define LIMIT_ACCUMULATION_ADDR 150 //Limited this value, because i take limit clients
 
 class Compressor{
 public:
@@ -21,6 +26,7 @@ public:
     void insert(const std::pair<Code_value, Info_value>&);
     void insert(const Code_value&, const Info_value&);
 
+    //Analyze all data in this object and sorted his
     void make_compress();
 
     const std::unordered_map<Code_value, int>& get_result() const;
@@ -34,6 +40,7 @@ private:
     std::unordered_map<Code_value, int> compressed_info; //compressed data
     int sz; //transfer size
 
+    //Help be analyze time code connect and disconnect
     void handle_time();
 };
 

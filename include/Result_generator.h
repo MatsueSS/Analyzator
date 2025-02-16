@@ -16,11 +16,12 @@ public:
     Result_generator(Result_generator&&) noexcept;
     Result_generator& operator=(Result_generator&&) noexcept;
 
+    //create and fill result file
     void generate_report() const;
 
 private:
-    std::unique_ptr<Compressor> compressor;
-    std::unique_ptr<CSV_reader> translator;
+    std::unique_ptr<Compressor> compressor; //Compressed data
+    std::unique_ptr<CSV_reader> translator; //Give description on codes
 
 };
 

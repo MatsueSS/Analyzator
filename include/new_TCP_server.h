@@ -15,7 +15,6 @@
 
 #define PORT 8341
 #define BACKLOG 10 //MAX clients waiting accepts in listening
-#define MAXLINE 1024
 #define MAX_CLIENTS_NOW 100
 
 //returns in successful IPv4 or IPv6 addr, in failure return ""
@@ -32,14 +31,14 @@ public:
     void start();
 
 private:
-    std::unordered_map<Client, Action> handle_clients;
+    std::unordered_map<Client, std::pair<Action,int>> handle_clients;
     std::unordered_map<Action, std::unique_ptr<Handle>> map_handle;
 
-    fd_set master_fd;
-    std::mutex mtx;
-    std::condition_variable cv;
-    std::vector<std::thread> workers;
-    std::queue<Client> clients;
+    fd_set master_fd; //All set for select
+    std::mutex mtx; //Blocked access for Queue ready clients
+    std::condition_variable cv; //Notify thread about new ready clients
+    std::vector<std::thread> workers; //Container threads
+    std::queue<Client> clients; //Queue ready clients
     int server_socket;
     int maxfd;
 

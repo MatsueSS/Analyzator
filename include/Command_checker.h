@@ -14,6 +14,7 @@ public:
     virtual int handle(const Client&, std::unique_ptr<PostgresDB>&) override;
 
 protected:
+    //entered in transaction's table users actions
     void make_transaction(Action, int, const std::string&, const std::string&, std::unique_ptr<PostgresDB>&);
 };
 

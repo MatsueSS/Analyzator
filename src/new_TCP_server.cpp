@@ -6,6 +6,8 @@
 #include "Add.h"
 #include "Del.h"
 #include "Edit.h"
+#include "Log.h"
+#include "Blocker.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -45,7 +47,10 @@ new_TCP_server::new_TCP_server()
 
 void new_TCP_server::socket()
 {
-    server_socket = ::socket(AF_INET, SOCK_STREAM, 0);
+    if((server_socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0){
+        Log::make_note("101");
+        return;
+    }
     const int on = 1;
     setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 }
@@ -57,12 +62,18 @@ void new_TCP_server::bind()
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(PORT);
-    ::bind(server_socket, (sockaddr *)&servaddr, sizeof(servaddr));
+    if(::bind(server_socket, (sockaddr *)&servaddr, sizeof(servaddr)) < 0){
+        Log::make_note("102");
+        return;
+    }
 }
 
 void new_TCP_server::listen()
 {
-    ::listen(server_socket, BACKLOG);
+    if(::listen(server_socket, BACKLOG) < -1){
+        Log::make_note("103");
+        return;
+    }
 }
 
 void new_TCP_server::start()
@@ -104,21 +115,35 @@ void new_TCP_server::start()
 
 void new_TCP_server::accept_clients()
 {
+    if(handle_clients.size() == MAX_CLIENTS_NOW)
+        return;
     sockaddr_storage cliaddr;
     socklen_t clilen = sizeof(cliaddr);
     int sockfd = accept(server_socket, (sockaddr *)&cliaddr, &clilen);
     if(sockfd < 0){
-        //error
+        if(errno == ENFILE || errno == EMFILE)
+            Log::make_note("107");
+        else if(errno == ENOMEM || errno == ENOBUFS)
+            Log::make_note("106");
+        else if(errno == EPROTO || errno == EPERM)
+            Log::make_note("1002");
         return;
     }
+    if(Blocker::has_prison(sock_ntop((sockaddr*)&cliaddr))){
+        write_str("You was banned\n", sockfd);
+        close(sockfd);
+        return;
+    }
+    Log::make_note("100001 " + sock_ntop((sockaddr*)&cliaddr));
     FD_SET(sockfd, &master_fd);
     maxfd = maxfd > sockfd ? maxfd : sockfd;
-    handle_clients.insert(std::make_pair(Client(sockfd, cliaddr, clilen), greetings));
+    handle_clients.insert(std::make_pair(Client(sockfd, cliaddr, clilen), std::make_pair(greetings, 0)));
     write_str("Hello, enter needed action: registration or authentification\n", sockfd);
 }
 
 void new_TCP_server::close_connect(const Client& obj)
 {
+    Log::make_note("100002 " + sock_ntop((sockaddr*)&obj.cliaddr));
     close(obj.sockfd);
     handle_clients.erase(obj);
     FD_CLR(obj.sockfd, &master_fd);
@@ -141,9 +166,9 @@ void new_TCP_server::workThread()
         clients.pop();
         ul.unlock();
 
-        int result = map_handle.find(handle_clients.find(client)->second)->second->handle(client, conn);
+        int result = map_handle.find(handle_clients.find(client)->second.first)->second->handle(client, conn);
 
-        switch(handle_clients.at(client)){
+        switch(handle_clients[client].first){
         case greetings:
             if(result == NOONE){
                 write_str("You entered false action. Try again\n", client.sockfd);
@@ -153,7 +178,7 @@ void new_TCP_server::workThread()
                 close_connect(client);
                 break;
             }
-            handle_clients[client] = Action(result);
+            handle_clients[client].first = Action(result);
             write_str("Entered name and password for continue\n", client.sockfd);
             break;
         case registration:
@@ -169,11 +194,14 @@ void new_TCP_server::workThread()
                 write_str("Your registration was success. You can use this app\n", client.sockfd);
                 write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
                 client.id = result;
-                handle_clients[client] = command_checker;
+                handle_clients[client].first = command_checker;
             }
             break;
         case authentification:
             if(result == bad_auth){
+                if(++(handle_clients[client].second) == CLIENT_TRIES)
+                    break;
+                
                 write_str("You make a mistake. Try again\n", client.sockfd);
                 break;
             }
@@ -188,7 +216,7 @@ void new_TCP_server::workThread()
                 write_str("Your authorization was successful. You can use this app.\n", client.sockfd);
                 write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
                 client.id = result;
-                handle_clients[client] = command_checker;
+                handle_clients[client].first = command_checker;
             }
             break;
         case command_checker:
@@ -199,7 +227,7 @@ void new_TCP_server::workThread()
                 close_connect(client);
             }
             else{
-                handle_clients[client] = Action(result);
+                handle_clients[client].first = Action(result);
             }
             break;
         case get:
@@ -209,7 +237,7 @@ void new_TCP_server::workThread()
             }
             if(result == not_exist)
                 write_str("Resourse with this name isn't exist. Try again\n", client.sockfd);
-            handle_clients[client] = Action(command_checker);
+            handle_clients[client].first = Action(command_checker);
             break;
         case add:
             if(result == disconnect){
@@ -225,15 +253,22 @@ void new_TCP_server::workThread()
             else{
                 write_str("New data was added\n", client.sockfd);
             }
-            handle_clients[client] = command_checker;
+            handle_clients[client].first = command_checker;
             break;
         case edit:
             if(result == disconnect){
                 close_connect(client);
                 break;
             }
-            handle_clients[client] = command_checker;
+            handle_clients[client].first = command_checker;
             break;
+        }
+        if(handle_clients[client].second == CLIENT_TRIES){
+            write_str("You was banned\n", client.sockfd);
+            Blocker::add_prison(sock_ntop((sockaddr*)&client.cliaddr));
+            Log::make_note("100003 " + sock_ntop((sockaddr*)&client.cliaddr));
+            close_connect(client);
+            continue;
         }
         if(result != disconnect)
             FD_SET(client.sockfd, &master_fd);

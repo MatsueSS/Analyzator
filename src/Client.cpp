@@ -4,23 +4,22 @@
 #include <unistd.h>
 
 Client::Client(int sockfd, const sockaddr_storage& addr, socklen_t len) 
-    : sockfd(sockfd), clilen(len), id(-1), bad_auth_tries(0)
+    : sockfd(sockfd), clilen(len), id(-1)
 {
     memcpy(&cliaddr, &addr, sizeof(sockaddr_storage));
 }
 
 Client::Client(const Client& obj) : sockfd(obj.sockfd), clilen(obj.clilen),
-    id(obj.id), bad_auth_tries(obj.bad_auth_tries)
+    id(obj.id)
 {
     memcpy(&cliaddr, &obj.cliaddr, sizeof(sockaddr_storage));
 }
 
-Client::Client(Client&& obj) noexcept : sockfd(obj.sockfd), clilen(obj.clilen), id(obj.id), bad_auth_tries(obj.bad_auth_tries)
+Client::Client(Client&& obj) noexcept : sockfd(obj.sockfd), clilen(obj.clilen), id(obj.id)
 {
     memmove(&cliaddr, &obj.cliaddr, sizeof(sockaddr_storage));
     obj.sockfd = -1;
     obj.clilen = 0;
-    obj.bad_auth_tries = 0;
     obj.id = 0;
 }
 
@@ -32,7 +31,6 @@ Client& Client::operator=(Client&& obj) noexcept
     sockfd = obj.sockfd;
     clilen = obj.clilen;
     id = obj.id;
-    bad_auth_tries = obj.bad_auth_tries;
     memmove(&cliaddr, &obj.cliaddr, sizeof(sockaddr_storage));
     obj.sockfd = -1;
 
@@ -48,7 +46,6 @@ Client& Client::operator=(const Client& obj)
     sockfd = obj.sockfd;
     clilen = obj.clilen;
     id = obj.id;
-    bad_auth_tries = obj.bad_auth_tries;
     return *this;
 }
 

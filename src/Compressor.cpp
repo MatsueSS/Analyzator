@@ -112,8 +112,10 @@ void Compressor::make_compress()
 
     handle_time();
 
-    transfer.clear();
-    sz = 0;
+    if(sz >= LIMIT_ACCUMULATION_ADDR){
+        transfer.clear();
+        sz = 0;
+    }
 }
 
 const std::unordered_map<Code_value, int>& Compressor::get_result() const
