@@ -168,7 +168,7 @@ void new_TCP_server::workThread()
 
         int result = map_handle.find(handle_clients.find(client)->second.first)->second->handle(client, conn);
 
-        switch(handle_clients.at(client).first){
+        switch(handle_clients[client].first){
         case greetings:
             if(result == NOONE){
                 write_str("You entered false action. Try again\n", client.sockfd);
