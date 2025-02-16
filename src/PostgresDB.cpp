@@ -75,3 +75,8 @@ std::vector<std::vector<std::string>> PostgresDB::fetch(const std::string& query
     PQclear(res);
     return result;
 }
+
+bool PostgresDB::is_connect()
+{
+    return PQstatus(conn) == CONNECTION_OK;
+}
