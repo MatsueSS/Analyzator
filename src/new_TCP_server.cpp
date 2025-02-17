@@ -90,7 +90,7 @@ void new_TCP_server::start()
     while(true){
         timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 10000;
+        time.tv_usec = 10;
         fd_set readset = master_fd;
         ssize_t n;
         if((n = select(maxfd+1, &readset, nullptr, nullptr, &time)) > 0){
