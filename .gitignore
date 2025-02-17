@@ -9,5 +9,7 @@ build/
 
 *.txt
 
+!example_clients/*.txt
+
 .DS_Store
 Thumbs.db
