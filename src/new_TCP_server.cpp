@@ -84,14 +84,13 @@ void new_TCP_server::start()
         workers.emplace_back(&new_TCP_server::workThread, this);
     }
 
-    timeval time;
-    time.tv_sec = 0;
-    time.tv_usec = 100;
-
     FD_ZERO(&master_fd);
     maxfd = server_socket;
     FD_SET(server_socket, &master_fd);
     while(true){
+        timeval time;
+        time.tv_sec = 0;
+        time.tv_usec = 10000;
         fd_set readset = master_fd;
         ssize_t n;
         if((n = select(maxfd+1, &readset, nullptr, nullptr, &time)) > 0){
