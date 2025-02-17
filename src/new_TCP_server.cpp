@@ -237,8 +237,7 @@ void new_TCP_server::handle_registration(Client& client, int result)
         return;
     }
     else{
-        write_str("Your registration was success. You can use this app\n", client.sockfd);
-        write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
+        write_str("Your registration was success. You can use this app\nFor next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
         handle_clients.find(client)->first.id = result;
         handle_clients[client].first = command_checker;
     }
@@ -260,8 +259,7 @@ void new_TCP_server::handle_authentification(Client& client, int result)
         close_connect(client);
     }
     else{
-        write_str("Your authorization was successful. You can use this app.\n", client.sockfd);
-        write_str("For next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
+        write_str("Your authorization was successful. You can use this app.\nFor next just enter command: (get) password, (add) password, (del) password, (edit) auth password\nJust enter command, which write in the brackets\n", client.sockfd);
         handle_clients.find(client)->first.id = result;
         handle_clients[client].first = command_checker;
     }
