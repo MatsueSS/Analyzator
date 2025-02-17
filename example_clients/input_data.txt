@@ -1,0 +1,7 @@
+test1: reg Michael 12345 add linux 111222333
+test3: auth Michael 12345 get linux
+test4: auth Michael 12345 edit 73117
+test5: auth Michael 73117 del linux
+test6: reg Cat 98765 add my_mail 12345
+test7: auth Michael 73117 get my_mail
+test8: auth Michael 73117 del my_mail

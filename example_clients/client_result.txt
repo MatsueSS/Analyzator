@@ -1,0 +1,91 @@
+---------- TEST 1 ----------
+Hello, enter needed action: registration or authentification
+
+Entered name and password for continue
+
+Your registration was success. You can use this app
+For next just enter command: (get) password, (add) password, (del) password, (edit) auth password
+Just enter command, which write in the brackets
+
+Please enter add name and password for this resourse
+
+New data was added
+
+---------- TEST 2 ----------
+Hello, enter needed action: registration or authentification
+
+Entered name and password for continue
+
+Your authorization was successful. You can use this app.
+For next just enter command: (get) password, (add) password, (del) password, (edit) auth password
+Just enter command, which write in the brackets
+
+Please enter the name of the desired resourse
+
+111222333
+
+---------- TEST 3 ----------
+Hello, enter needed action: registration or authentification
+
+Entered name and password for continue
+
+Your authorization was successful. You can use this app.
+For next just enter command: (get) password, (add) password, (del) password, (edit) auth password
+Just enter command, which write in the brackets
+
+Please enter the new password of your auth
+
+Your authentification password was edited
+
+---------- TEST 4 ----------
+Hello, enter needed action: registration or authentification
+
+Entered name and password for continue
+
+Your authorization was successful. You can use this app.
+For next just enter command: (get) password, (add) password, (del) password, (edit) auth password
+Just enter command, which write in the brackets
+
+Please enter the name of the desired resourse
+
+Your resourse was deleted
+
+---------- TEST 5 ----------
+Hello, enter needed action: registration or authentification
+
+Entered name and password for continue
+
+Your registration was success. You can use this app
+For next just enter command: (get) password, (add) password, (del) password, (edit) auth password
+Just enter command, which write in the brackets
+
+Please enter add name and password for this resourse
+
+New data was added
+
+---------- TEST 6 ----------
+Hello, enter needed action: registration or authentification
+
+Entered name and password for continue
+
+Your authorization was successful. You can use this app.
+For next just enter command: (get) password, (add) password, (del) password, (edit) auth password
+Just enter command, which write in the brackets
+
+Please enter the name of the desired resourse
+
+Resourse with this name isn't exist. Try again
+
+---------- TEST 7 ----------
+Hello, enter needed action: registration or authentification
+
+Entered name and password for continue
+
+Your authorization was successful. You can use this app.
+For next just enter command: (get) password, (add) password, (del) password, (edit) auth password
+Just enter command, which write in the brackets
+
+Please enter the name of the desired resourse
+
+Your resourse was deleted
+
