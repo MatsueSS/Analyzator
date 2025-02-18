@@ -14,6 +14,8 @@ Release of the first version of my program with written tests of different modul
 
 Change in user processing structure, release of new version v1.1.0 - 15.02.2025
 
+Release of a new version with added tests and changes in program performance v1.1.2 - 17.02.2025
+
 ----- Design solutions -----
 
 Now I want to write about my choice of these or those tools and about my analysis.
@@ -35,6 +37,10 @@ For module 1, specifically for reading portions, I did a test where I generated 
 ----- Main problem -----
 
 I want to describe the main error that I can't logically fix yet. I made such a log compression system that if a user connects, then their connection timestamp is entered into the logs. When summing up, I may be interested in the maximum communication time, so I need to track all clients. In order not to disturb the order, I decided to make it so that logs without the end of the timestamp remain in the container and wait for the timestamp. I set the size limit for this container. Let's not exclude the situation when a number of users connect that is greater than the maximum number of logs stored in the container, then all the logs will be filled and reading the logs will be disrupted. Therefore, I set a limit on clients
+
+----- Clients Problem -----
+
+I want to describe another problem, the solution to which I suppose, but it will greatly complicate the logic of the server. This problem is the freezing of clients. I do not process frozen clients, which is wrong. I tried to set the SO_KEEPALIVE, but tests showed that it has no effect and the client continues to hang. I see one of the solutions - creating a map of the latest activities, which will be constantly viewed by one of the threads, which is in the background in its free time, but I think that I will leave this issue, because it can clearly be implemented differently
 
 ----- Data base -----
 
