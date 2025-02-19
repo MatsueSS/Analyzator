@@ -40,8 +40,17 @@ I want to describe the main error that I can't logically fix yet. I made such a 
 
 ----- Clients Problem -----
 
-I want to describe another problem, the solution to which I suppose, but it will greatly complicate the logic of the server. This problem is the freezing of clients. I do not process frozen clients, which is wrong. I tried to set the SO_KEEPALIVE, but tests showed that it has no effect and the client continues to hang. I see one of the solutions - creating a map of the latest activities, which will be constantly viewed by one of the threads, which is in the background in its free time, but I think that I will leave this issue, because it can clearly be implemented differently
+I want to describe another problem, the solution to which I suppose, but it will greatly complicate the logic of the server. This problem is the freezing of clients. I do not process frozen clients, which is wrong. I tried to set the SO_KEEPALIVE, but tests showed that it has no effect and the client continues to hang. I see one of the solutions - creating a map of the latest activities, which will be constantly viewed by one of the threads, which is in the background in its free time, but I think that I will leave this issue, because it can clearly be implemented differently.
+I recently tried to set the SO_KEEPALIVE parameter and specified the necessary other parametrs, which set the check time, frequency of sending confirmation messages and their number. I checked the server operation using tcpdump and did not notice sending packets. It seems to me that one of the solutions may be - setting global values ​​on the linux system for SO_KEEPALIVE.
 
 ----- Data base -----
 
 The PostgreSQL was chosen as the database. In my opinion, this is the most convenient database in that each thread of your program must have a separate connection to it.
+
+----- Performance tests -----
+
+I placed time stamps in the client thread processing cycle. All calculations not related to accessing the database took tens of microseconds. Calculations related to accessing the database took an average of 100 milliseconds. I decided to run the client, starting with registration and ending with using all the functions. I also did it for the client with authentication. I got that on average 50 milliseconds per client. Thus, it can be said that 1 thread can process about 20 clients per second, and for 6 threads that I use in the program it comes out to 120. It is worth making an adjustment for the network and other loads, then we will get the result - my server on my device can handle approximately 100 clients.
+
+I conducted these tests on an old laptop with 8 GB of RAM and an 8-thread processor.
+
+Thus, the value of the macro in the new_TCP_server.h is calculated based on experiments, which I advise everyone who will use my program to do and set their own value
