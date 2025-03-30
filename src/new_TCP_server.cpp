@@ -204,6 +204,8 @@ void new_TCP_server::workThread()
         }
         if(result != disconnect)
             FD_SET(client.sockfd, &master_fd);
+        else
+            close_connect(client);
     }
 }
 
