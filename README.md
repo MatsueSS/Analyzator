@@ -54,3 +54,7 @@ I placed time stamps in the client thread processing cycle. All calculations not
 I conducted these tests on an old laptop with 8 GB of RAM and an 8-thread processor.
 
 Thus, the value of the macro in the new_TCP_server.h is calculated based on experiments, which I advise everyone who will use my program to do and set their own value
+
+----- Encrypt -----
+
+Client in example_clients uses RSA, salt 16, 100000 iteration
