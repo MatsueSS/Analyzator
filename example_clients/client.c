@@ -10,7 +10,17 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
+// #include <stdbool.h>
+// #include <openssl/evp.h>
+// #include <openssl/rand.h>
+
 #define SIZE 1024
+
+// int generate_key_from_password(const char *password, unsigned char *salt, int salt_len,
+//                                unsigned char *key, int key_len) {
+//     int iterations = 10000; // Количество итераций, чем больше — тем безопаснее, но дольше
+//     return PKCS5_PBKDF2_HMAC_SHA1(password, strlen(password), salt, salt_len, iterations, key_len, key);
+// }
 
 void str_cli(FILE* fp, int sockfd){
     // char sendline[SIZE], recvline[SIZE];
@@ -25,6 +35,7 @@ void str_cli(FILE* fp, int sockfd){
     fd_set rset;
     char buf[SIZE];
     int n;
+    // bool encrypt = false, crypt = false;
 
     FD_ZERO(&rset);
     for(;;){
@@ -51,6 +62,63 @@ void str_cli(FILE* fp, int sockfd){
                 FD_CLR(fileno(fp), &rset);
                 continue;
             }
+            // char* passw;
+
+            // if(encrypt){
+            //     char* name = (char *)malloc(SIZE/2*sizeof(char));
+            //     bool flag_space = false, flag_enter = false;
+
+            //     int j = 0, k = 0;
+            //     for(int i = 0; i < n; i++){
+            //         if(buf[i] == ' '){
+            //             name[j] = '\0';
+            //             flag_space = true;
+            //             continue;
+            //         }
+            //         if(buf[i] == '\n'){
+            //             passw[k] = '\0';
+            //             flag_enter = true;
+            //             break;
+            //         }
+            //         if(flag_space == false){
+            //             name[j++] = buf[i];
+            //         }
+            //         else if(flag_enter == false){
+            //             passw[k++] = buf[i];
+            //         }
+            //     }
+            //     if(flag_space == false)
+            //         name[j] = '\0';
+            //     if(flag_enter == false)
+            //         passw[k] = '\0';
+
+                
+
+            // }
+
+            // if(crypt){
+            //     unsigned char salt[16];
+            //     if(1 != RAND_bytes(salt, sizeof(salt))){
+            //         fprintf(stderr, "Error generating salt\n");
+            //         return 1;
+            //     }
+
+            //     unsigned char key[32];
+            //     if(!generate_key_from_password(passw, salt, sizeof(salt), key, sizeof(key))) {
+            //         fprintf(stderr, "Error generating key\n");
+            //         return 1;
+            //     }
+            // }
+
+            // if(strncmp(buf, "add", 3) == 0){
+            //     encrypt = true;
+            // }
+            // else if(strncmp(buf, "del", 3) == 0){
+            //     crypt = true;
+            // } else {
+            //     encrypt = false;
+            //     crypt = false;
+            // }
             write(sockfd, buf, n);
         }
     }
