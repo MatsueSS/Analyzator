@@ -58,3 +58,7 @@ Thus, the value of the macro in the new_TCP_server.h is calculated based on expe
 ----- Encrypt -----
 
 Client in example_clients uses RSA, salt 16, 100000 iteration
+
+----- used instruments -----
+
+C++/C, STL, git, cmake, libsodium, lidpq, openssl
